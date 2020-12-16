@@ -11,11 +11,7 @@
         android:theme="@style/Theme.PickingApp">
         <activity
             android:name=".Menu"
-            android:label="Menú Principal"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+            android:label="Menú Principal">
         </activity>
         <activity android:name=".MainActivity"
             android:theme="@style/Theme.PickingApp.NoActionBar">
