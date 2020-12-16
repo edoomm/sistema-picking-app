@@ -27,7 +27,11 @@ public class Menu extends AppCompatActivity implements BottomNavigationView.OnNa
 
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
+        // TODO: Mensaje de confirmación para salir de la aplicación
+
         Toast.makeText(getApplicationContext(), "Hasta pronto", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
+
+        // TODO: Limpiar la navegación para atrás cuando se le de click en **salir** (es decir que no se pueda regresar al menu principal a través del botón **atrás**).
     }
 }
