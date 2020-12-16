@@ -10,10 +10,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PickingApp">
         <activity
-            android:name=".Menu"
-            android:label="Menú Principal">
+            android:name=".PickUp"
+            android:label="Pick Up"
+            android:parentActivityName=".Menu">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Menu" />
         </activity>
-        <activity android:name=".MainActivity"
+
+        <activity
+            android:name=".Menu"
+            android:theme="@style/Theme.PickingApp.NoActionBar"></activity>
+        <activity
+            android:name=".MainActivity"
             android:theme="@style/Theme.PickingApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
