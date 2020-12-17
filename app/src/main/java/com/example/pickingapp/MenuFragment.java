@@ -18,11 +18,27 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
-        ImageButton button = (ImageButton) view.findViewById(R.id.btnPickUp);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        // btnPickUp
+        ImageButton btnPickUp = (ImageButton) view.findViewById(R.id.btnPickUp);
+        btnPickUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PickUp.class);
+                intent.putExtra("firstFragment", "PickUpFragment");
+                intent.putExtra("secondFragment", "none");
+                startActivity(intent);
+            }
+        });
+
+        // btnAlmacen
+        ImageButton btnAlmacen = (ImageButton) view.findViewById(R.id.btnAlmacen);
+        btnAlmacen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PickUp.class);
+                intent.putExtra("firstFragment", "none");
+                intent.putExtra("secondFragment", "AlmacenFragment");
                 startActivity(intent);
             }
         });
