@@ -15,8 +15,6 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.PickingApp">
-		<activity android:name=".Ayuda"
-			android:label="Preguntas Frecuentes"></activity>
 		<activity
 			android:name=".Escaneo"
 			android:label="Escaneo"
