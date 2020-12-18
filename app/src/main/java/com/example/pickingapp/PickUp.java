@@ -3,6 +3,7 @@ package com.example.pickingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -10,13 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class PickUp extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_up);
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_pickup);
 
@@ -74,4 +78,25 @@ public class PickUp extends AppCompatActivity {
                     return true;
                 }
             };
+    public void escanear_codigo ( View v ) {
+        escanear();
+    }
+
+    void escanear () {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(CapturaAuxiliar.class);
+        integrator.setOrientationLocked(true);
+        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
+        integrator.setPrompt("Escaneando código de barras");
+        integrator.initiateScan();
+    }
+
+    // What to do when the camera has scanned something
+    @Override
+    protected void onActivityResult (int request_code, int result_code, Intent data) {
+        // result stores the result of scanned stuff
+        IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
+        Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
+        super.onActivityResult(request_code, result_code, data);
+    }
 }
