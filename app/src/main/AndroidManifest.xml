@@ -9,12 +9,19 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.PickingApp">
-		<activity android:name=".Escaneo"></activity>
-		<activity android:name=".Configuracion" />
+		<activity
+			android:name=".Escaneo"
+			android:label="Escaneo"
+			android:parentActivityName=".PickUp" />
+		<activity
+			android:name=".Configuracion"
+			android:label="Configuracion"
+			android:parentActivityName=".Menu" />
 		<activity
 			android:name=".Lista"
 			android:label="@string/title_activity_lista"
-			android:theme="@style/Theme.PickingApp.NoActionBar" />
+			android:theme="@style/Theme.PickingApp.NoActionBar"
+			android:parentActivityName=".PickUp"/>
 		<activity
 			android:name=".PickUp"
 			android:label="Pick Up"
