@@ -41,6 +41,16 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        //btnConfig
+        ImageButton btnConfig = (ImageButton) view.findViewById(R.id.btnConfig);
+        btnConfig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Configuracion.class);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 

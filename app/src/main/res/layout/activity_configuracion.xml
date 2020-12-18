@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".PickUp">
+
+	<TextView
+		android:id="@+id/textView6"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Cambiar Método de Escaneo"
+		android:textColor="@color/colorPrimaryDark"
+		android:textSize="24sp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.496"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintVertical_bias="0.072" />
+
+	<RadioGroup
+		android:id="@+id/radioGroup"
+		android:layout_width="297dp"
+		android:layout_height="98dp"
+		app:layout_constraintBottom_toTopOf="@+id/button2"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.505"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+		<RadioButton
+			android:id="@+id/radioButton2"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Escáner"
+			android:textColor="@color/black"
+			android:textColorHighlight="@color/black"
+			android:textSize="18sp" />
+
+		<RadioButton
+			android:id="@+id/radioButton3"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Cámara"
+			android:textColor="@color/black"
+			android:textColorHighlight="#FFFFFF"
+			android:textSize="18sp" />
+	</RadioGroup>
+
+	<Button
+		android:id="@+id/button2"
+		android:layout_width="281dp"
+		android:layout_height="75dp"
+		android:text="Sincronización de escáner"
+		android:textSize="18sp"
+		app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_pickup"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/textView6"
+		app:layout_constraintVertical_bias="0.36" />
+
+	<com.google.android.material.bottomnavigation.BottomNavigationView
+		android:id="@+id/bottom_navigation_pickup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:background="?android:windowBackground"
+		app:itemIconTint="@color/bottom_nav_color"
+		app:itemTextColor="@color/bottom_nav_color"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:menu="@menu/bottom_navigation_pickup" />
+</androidx.constraintlayout.widget.ConstraintLayout>

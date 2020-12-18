@@ -16,20 +16,28 @@ public class PickUpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pick_up, container, false);
-        Button lista_button = view.findViewById(R.id.button_lista);
-        lista_button.setOnClickListener(
+        //btn lista
+        Button btnLista = view.findViewById(R.id.button_lista);
+        btnLista.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
-                        try{
-                            Intent intent = new Intent(view.getContext(), Lista.class);
-                            startActivity(intent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        Intent intent = new Intent(view.getContext(), Lista.class);
+                        startActivity(intent);
                     }
                 }
         );
+
+        //btnEscaneo
+        Button btnEscaneo = view.findViewById(R.id.button_scan);
+        btnEscaneo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(view.getContext(), Escaneo.class);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 }
