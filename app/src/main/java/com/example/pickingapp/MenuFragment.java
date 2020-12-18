@@ -41,6 +41,18 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        // btnAyuda
+        ImageButton btnAyuda = (ImageButton) view.findViewById(R.id.btnAyuda);
+        btnAyuda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Ayuda.class);
+                intent.putExtra("firstFragment", "none");
+                intent.putExtra("secondFragment", "AyudaFragment");
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 

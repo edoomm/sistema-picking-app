@@ -106,7 +106,7 @@
     </RadioGroup>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/escanear"
         android:layout_width="281dp"
         android:layout_height="75dp"
         android:text="Sincronización de escáner"
