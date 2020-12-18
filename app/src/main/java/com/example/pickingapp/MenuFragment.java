@@ -41,20 +41,20 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        // TODO: btnAyuda se comporta similar como btnPickup, solo que tendra TutorialFragment en firstFragment
+
         //btnConfig
         ImageButton btnConfig = (ImageButton) view.findViewById(R.id.btnConfig);
         btnConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Configuracion.class);
+                intent.putExtra("firstFragment", "none");
+                intent.putExtra("secondFragment", "ConfigFragment");
                 startActivity(intent);
             }
         });
 
         return view;
-    }
-
-    public void btnClicked(View v) {
-
     }
 }
