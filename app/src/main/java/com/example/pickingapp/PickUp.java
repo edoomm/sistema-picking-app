@@ -3,9 +3,6 @@ package com.example.pickingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -66,8 +63,9 @@ public class PickUp extends AppCompatActivity {
                             // TODO: Cambiar el titulo del actionbar (Almacen)
                             break;
                         case R.id.nav_config:
-                            // TODO: Popup - Y cambiar a la modalidad surte almacen
-                            Toast.makeText(getApplicationContext(), "Empezar config activity", Toast.LENGTH_SHORT).show();
+                            Intent intent1 = new Intent(getBaseContext(), Configuracion.class);
+                            startActivity(intent1);
+                            //Toast.makeText(getApplicationContext(), "Empezar config activity", Toast.LENGTH_SHORT).show();
                             return false;
                     }
 
