@@ -1,12 +1,15 @@
 package com.example.pickingapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -16,22 +19,41 @@ public class Menu extends AppCompatActivity implements BottomNavigationView.OnNa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
+        // Finding view to be shown
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_main);
-
+        // Place selected view in current Screen
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_menu, new MenuFragment()).commit();
-
+        // Listeners for navigation menu
         bottomNavigationView.setOnNavigationItemReselectedListener(this);
-    }
 
+    }
+    public void salir () {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
         // TODO: Mensaje de confirmación para salir de la aplicación
+        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+        confirmacion.setTitle("¿Seguro que desea salir?");
+        confirmacion.setPositiveButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                salir();
+                // finish();
+            }
+        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-        Toast.makeText(getApplicationContext(), "Hasta pronto", Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog dialog = confirmacion.create();
+        dialog.show();
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        //Toast.makeText(getApplicationContext(), "Hasta pronto", Toast.LENGTH_SHORT).show();
+
+
 
         // TODO: Limpiar la navegación para atrás cuando se le de click en **salir** (es decir que no se pueda regresar al menu principal a través del botón **atrás**).
     }

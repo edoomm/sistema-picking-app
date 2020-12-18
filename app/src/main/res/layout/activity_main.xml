@@ -8,16 +8,14 @@
 
     <Button
         android:id="@+id/btnIngresar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="118dp"
+        android:layout_height="58dp"
         android:onClick="ingresar"
         android:text="Ingresar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtNoEmpleado"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.947"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.459" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -67,7 +65,7 @@
         app:layout_constraintVertical_bias="0.581" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/escanear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Escanear"
