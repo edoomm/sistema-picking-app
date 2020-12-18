@@ -9,7 +9,8 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.PickingApp">
-		<activity android:name=".Configuracion"></activity>
+		<activity android:name=".Escaneo"></activity>
+		<activity android:name=".Configuracion" />
 		<activity
 			android:name=".Lista"
 			android:label="@string/title_activity_lista"
