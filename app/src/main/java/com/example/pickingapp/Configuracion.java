@@ -21,16 +21,21 @@ public class Configuracion extends AppCompatActivity {
 		BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_config);
 		bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
-		bottomNavigationView.setSelectedItemId(R.id.nav_settings);
-
 		// Deciding which fragment will show first
 		Fragment firstFragment = new ConfigFragment();
-//		Intent intent = getIntent();
-//		if (!intent.getStringExtra("secondFragment").equals("none")) {
-//			firstFragment = new ConfigFragment();
-//			bottomNavigationView.setSelectedItemId(R.id.nav_config);
-//			// TODO: Cambiar el titulo del actionbar (PickUp)
-//		}
+
+		Intent intent = getIntent();
+
+		if (!intent.getStringExtra("firstFragment").equals("none")) {
+			firstFragment = new AyudaFragment();
+			bottomNavigationView.setSelectedItemId(R.id.nav_faq);
+			// TODO: Cambiar el titulo del actionbar (PickUp)
+		}
+		else {
+			firstFragment = new ConfigFragment();
+			bottomNavigationView.setSelectedItemId(R.id.nav_settings);
+			// TODO: Cambiar el titulo del actionbar (PickUp)
+		}
 
 //		getSupportFragmentManager().beginTransaction().replace(R.id.fragment_menu_pickup, firstFragment).commit();
 	}
@@ -51,9 +56,11 @@ public class Configuracion extends AppCompatActivity {
 							selectedFragment = new ConfigFragment();
 							// TODO: Cambiar titulo action bar
 							break;
-						case R.id.nav_tutorial:
-							// TODO: Empezar fragment tutorial
 						case R.id.nav_faq:
+							selectedFragment = new AyudaFragment();
+							// TODO: Cambiar titulo action bar
+							break;
+						case R.id.nav_tutorial:
 							// TODO: Empezar fragment FAQ
 							// TODO: Cuando se empiece este debe aparecer en activity_configuracion.xml un boton flotante que servira para mandar una nueva pregunta
 						default:

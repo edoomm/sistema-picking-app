@@ -39,8 +39,6 @@ public class PickUp extends AppCompatActivity {
             bottomNavigationView.setSelectedItemId(R.id.nav_almacen);
             // TODO: Cambiar el titulo del actionbar (Almacen)
         }
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_menu_pickup, firstFragment).commit();
     }
 
     private  BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -68,6 +66,8 @@ public class PickUp extends AppCompatActivity {
                             break;
                         case R.id.nav_config:
                             Intent intent1 = new Intent(getBaseContext(), Configuracion.class);
+                            intent1.putExtra("firstFragment", "none");
+                            intent1.putExtra("secondFragment", "ConfigFragment");
                             startActivity(intent1);
                             //Toast.makeText(getApplicationContext(), "Empezar config activity", Toast.LENGTH_SHORT).show();
                             return false;

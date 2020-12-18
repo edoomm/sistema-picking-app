@@ -46,7 +46,7 @@ public class MenuFragment extends Fragment {
         btnAyuda.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Ayuda.class);
+                Intent intent = new Intent(getActivity(), Configuracion.class);
                 intent.putExtra("firstFragment", "AyudaFragment");
                 intent.putExtra("secondFragment", "none");
                 startActivity(intent);
