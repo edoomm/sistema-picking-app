@@ -3,5 +3,5 @@
     <string name="title_activity_lista">Lista</string>
     <string name="tab_text_1">Por escanear</string>
     <string name="tab_text_2">Escaneado</string>
-    <string name="tab_text_3">Original</string>
+    <string name="tab_text_3">Todo</string>
 </resources>
