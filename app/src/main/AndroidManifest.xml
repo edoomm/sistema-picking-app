@@ -26,7 +26,6 @@
 		<activity
 			android:name=".Lista"
 			android:label="@string/title_activity_lista"
-			android:theme="@style/Theme.PickingApp.NoActionBar"
 			android:parentActivityName=".PickUp"/>
 		<activity
 			android:name=".PickUp"

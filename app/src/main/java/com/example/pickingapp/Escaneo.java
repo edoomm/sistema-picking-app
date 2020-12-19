@@ -21,6 +21,17 @@ public class Escaneo extends AppCompatActivity {
 		bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch (item.getItemId()){
+			case android.R.id.home:
+				finish();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	private  BottomNavigationView.OnNavigationItemSelectedListener navListener =
 			new BottomNavigationView.OnNavigationItemSelectedListener() {
 				@Override

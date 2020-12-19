@@ -27,4 +27,15 @@ public class Lista extends AppCompatActivity {
 		TabLayout tabs = findViewById(R.id.tabs);
 		tabs.setupWithViewPager(viewPager);
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch (item.getItemId()){
+			case android.R.id.home:
+				finish();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
 }
