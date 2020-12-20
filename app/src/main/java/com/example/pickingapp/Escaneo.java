@@ -59,6 +59,8 @@ public class Escaneo extends AppCompatActivity {
 							break;
 						case R.id.nav_config:
 							Intent intent3 = new Intent(getBaseContext(), Configuracion.class);
+							intent3.putExtra("firstFragment", "none");
+							intent3.putExtra("secondFragment", "ConfigFragment");
 							startActivity(intent3);
 							break;
 					}
