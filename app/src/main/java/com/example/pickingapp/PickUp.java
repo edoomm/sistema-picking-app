@@ -20,8 +20,6 @@ public class PickUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_up);
 
-
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_pickup);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
