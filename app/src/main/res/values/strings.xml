@@ -4,4 +4,15 @@
 	<string name="tab_text_1">Por escanear</string>
 	<string name="tab_text_2">Escaneado</string>
 	<string name="tab_text_3">Original</string>
+	<string-array name="lista_SKU_ejemplo">
+		<item>508241</item>
+		<item>508242</item>
+		<item>508243</item>
+		<item>508244</item>
+		<item>551333</item>
+		<item>551534</item>
+		<item>551535</item>
+		<item>15760</item>
+		<item>17445</item>
+	</string-array>
 </resources>
