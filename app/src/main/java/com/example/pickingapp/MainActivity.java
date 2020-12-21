@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity  {
         startActivity(new Intent(this, Menu.class));
     }
 
+    void mostrar_main () {
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
     void escanear_codigo () {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setCaptureActivity(CapturaAuxiliar.class);
@@ -47,8 +51,12 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult (int request_code, int result_code, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
-        // Toast.makeText(getApplicationContext(), "!Bienvenido¡", Toast.LENGTH_SHORT).show();
-        ingreso_escaneo();
+        if ( result.getContents() == null ) {
+            mostrar_main();
+        } else {
+            ingreso_escaneo();
+        }
+
         super.onActivityResult(request_code, result_code, data);
     }
 
