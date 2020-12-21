@@ -9,15 +9,17 @@
     <string name="title_reporte_problemas">Reportar problemas</string>
     <string name="title_campo_captura">Por favor, ingresa una breve descripción del problema</string>
     <string name="title_boton_reporte_problemas">Enviar</string>
-	<string-array name="lista_SKU_ejemplo">
-		<item>508241</item>
-		<item>508242</item>
-		<item>508243</item>
-		<item>508244</item>
-		<item>551333</item>
-		<item>551534</item>
-		<item>551535</item>
-		<item>15760</item>
-		<item>17445</item>
-	</string-array>
+    <string-array name="lista_SKU_ejemplo">
+        <item>508241</item>
+        <item>508242</item>
+        <item>508243</item>
+        <item>508244</item>
+        <item>551333</item>
+        <item>551534</item>
+        <item>551535</item>
+        <item>15760</item>
+        <item>17445</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
