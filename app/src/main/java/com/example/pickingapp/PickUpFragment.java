@@ -27,17 +27,17 @@ public class PickUpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pick_up, container, false);
-//        //btn lista
-//        Button btnLista = view.findViewById(R.id.button_lista);
-//        btnLista.setOnClickListener(
-//                new View.OnClickListener(){
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(view.getContext(), Lista.class);
-//                        startActivity(intent);
-//                    }
-//                }
-//        );
+        //btn lista
+        Button btnLista = view.findViewById(R.id.button_lista);
+        btnLista.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(view.getContext(), Lista.class);
+                        startActivity(intent);
+                    }
+                }
+        );
 
         //btnEscaneo
         Button btnEscaneo = view.findViewById(R.id.button_scan);

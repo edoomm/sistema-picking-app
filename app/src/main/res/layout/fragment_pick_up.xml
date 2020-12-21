@@ -6,26 +6,80 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:text="Pasillo:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="20dp"
+        android:text="Rack:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <ImageView
+        android:id="@+id/imgPlanograma"
+        android:src="@drawable/planograma"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <androidx.viewpager.widget.ViewPager
         android:foregroundGravity="center"
         android:id="@+id/productsPager"
+        android:layout_marginTop="260dp"
+        android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:overScrollMode="never"
         android:clipToPadding="false"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="120dp">
     </androidx.viewpager.widget.ViewPager>
 
     <Button
-        android:id="@+id/button_scan"
-        android:text="Escanear"
+        android:id="@+id/button_lista"
+        android:text="Ver lista completa"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
+        android:layout_below="@+id/productsPager"
+        android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_height="80dp"
+        android:layout_below="@+id/button_lista"
+        android:layout_width="match_parent" >
+        <Button
+            android:id="@+id/button_scan"
+            android:text="Escanear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/button_productof"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_ver_lista"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/button_scan"
+            android:text="Producto faltante"
+            android:textColor="@color/colorPrimary"
+            app:backgroundTint="#FFFFFF" />
+    </LinearLayout>
+
 
 
 </RelativeLayout>
