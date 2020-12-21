@@ -8,19 +8,20 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class Configuracion extends AppCompatActivity {
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_configuracion);
 		BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_config);
 		bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
-
 		// Deciding which fragment will show first
 		Fragment firstFragment = new ConfigFragment();
 
@@ -36,7 +37,6 @@ public class Configuracion extends AppCompatActivity {
 			bottomNavigationView.setSelectedItemId(R.id.nav_settings);
 			// TODO: Cambiar el titulo del actionbar (PickUp)
 		}
-
 //		getSupportFragmentManager().beginTransaction().replace(R.id.fragment_menu_pickup, firstFragment).commit();
 	}
 

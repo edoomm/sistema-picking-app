@@ -22,7 +22,7 @@
         app:layout_constraintVertical_bias="0.072" />
 
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/pref_escaner"
         android:layout_width="297dp"
         android:layout_height="98dp"
         app:layout_constraintBottom_toTopOf="@+id/button2"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6">
 
         <RadioButton
-            android:id="@+id/radioButton2"
+            android:id="@+id/escaner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Escáner"
@@ -41,7 +41,7 @@
             android:textSize="18sp" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/camara"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cámara"
