@@ -93,7 +93,7 @@
         android:layout_marginBottom="357dp"
         android:text='2.- Ve a la sección de configuración, y selecciona la opción "Escaner".'
         android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/fab"
+        app:layout_constraintBottom_toTopOf="@+id/my_fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.458"
         app:layout_constraintStart_toStartOf="parent"
@@ -129,7 +129,7 @@
         app:layout_constraintVertical_bias="0.395" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/my_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

@@ -25,7 +25,6 @@ public class Menu extends AppCompatActivity implements BottomNavigationView.OnNa
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_menu, new MenuFragment()).commit();
         // Listeners for navigation menu
         bottomNavigationView.setOnNavigationItemReselectedListener(this);
-
     }
     public void salir () {
         Intent intent = new Intent(this, MainActivity.class);
