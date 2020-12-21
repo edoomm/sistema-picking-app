@@ -4,4 +4,9 @@
     <string name="tab_text_1">Por escanear</string>
     <string name="tab_text_2">Escaneado</string>
     <string name="tab_text_3">Todo</string>
+
+    //Reporte de problemas o preguntas
+    <string name="title_reporte_problemas">Reportar problemas</string>
+    <string name="title_campo_captura">Por favor, ingresa una breve descripción del problema</string>
+    <string name="title_boton_reporte_problemas">Enviar</string>
 </resources>

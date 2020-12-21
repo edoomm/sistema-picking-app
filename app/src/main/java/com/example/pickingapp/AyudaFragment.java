@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+
 
 
 public class AyudaFragment extends Fragment{
@@ -25,8 +25,8 @@ public class AyudaFragment extends Fragment{
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(view, "Test de mensaje para acción", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent= new Intent(getActivity(),ProblemaPregunta.class);
+                startActivity(intent);
             }
         });
         return view;
