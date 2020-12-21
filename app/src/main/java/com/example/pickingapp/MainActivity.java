@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -28,11 +30,19 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void ingresar(View view) {
-        startActivity(new Intent(this, Menu.class));
+        EditText textNoEmpleado = findViewById(R.id.txtNoEmpleado);
+        String numero_empleado = textNoEmpleado.getText().toString();
+        ingresar(numero_empleado);
     }
 
-    void ingreso_escaneo(){
-        startActivity(new Intent(this, Menu.class));
+    void ingresar ( String numero ) {
+        if ( numero.equals("123456789") ) {
+            startActivity(new Intent(this, Menu.class));
+        } else {
+            EditText textNoEmpleado = findViewById(R.id.txtNoEmpleado);
+            textNoEmpleado.getText().clear();
+            Toast.makeText(getApplicationContext(), "Número no reconocido, escanee su número de empleado", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void mostrar_main () {
@@ -54,9 +64,8 @@ public class MainActivity extends AppCompatActivity  {
         if ( result.getContents() == null ) {
             mostrar_main();
         } else {
-            ingreso_escaneo();
+            ingresar( result.getContents() );
         }
-
         super.onActivityResult(request_code, result_code, data);
     }
 
