@@ -10,10 +10,6 @@
         android:icon="@drawable/ic_baseline_person_remove_24"
         android:title="Pick Up"/>
     <item
-        android:id="@+id/nav_cambio"
-        android:icon="@drawable/ic_baseline_swap_vert_24"
-        android:title="Cambiar"/>
-    <item
         android:id="@+id/nav_almacen"
         android:icon="@drawable/ic_baseline_person_add_alt_1_24"
         android:title="Almacen"/>

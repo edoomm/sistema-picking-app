@@ -54,10 +54,6 @@ public class PickUp extends AppCompatActivity {
                             selectedFragment = new PickUpFragment();
                             getSupportActionBar().setTitle("Pick Up");
                             break;
-                        case R.id.nav_cambio:
-                            // TODO: Popup - Y cambiar a la modalidad surte almacen
-                            Toast.makeText(getApplicationContext(), "Aca debe ir un popup explicando el surte almacen y cambiando a esa modalidad", Toast.LENGTH_SHORT).show();
-                            return false;
                         case R.id.nav_almacen:
                             selectedFragment = new AlmacenFragment();
                             getSupportActionBar().setTitle("Almacén");
