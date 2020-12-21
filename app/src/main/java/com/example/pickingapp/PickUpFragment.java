@@ -1,5 +1,6 @@
 package com.example.pickingapp;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
@@ -10,12 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
@@ -60,6 +64,20 @@ public class PickUpFragment extends Fragment {
             }
         });
 
+        setViewPagerUp(view);
+
+        return view;
+    }
+
+    public void escanear_codigo ( View v ) {
+        escanear();
+    }
+
+    private void setViewPagerUp (View view) {
+        ImageView planograma = view.findViewById(R.id.imgPlanograma);
+        TextView txtPasillo = view.findViewById(R.id.txtPasillo);
+        TextView txtRack = view.findViewById(R.id.txtRack);
+
         // Creacion de card views
         models = new ArrayList<>();
         models.add(new Model("SKU: 508241", "LENTES PRE GRADUADOS AZUL", "A.01.01.02"));
@@ -71,34 +89,52 @@ public class PickUpFragment extends Fragment {
         viewPager =  (ViewPager) view.findViewById(R.id.productsPager);
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
-//
-//        // TODO: Cambiar imagenes de planograma
-//        // TODO: Cambiar por metodo no depreciado
-//        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//
-//            }
-//        });
 
-        return view;
+        planograma.setImageResource(R.drawable.planograma_4_7);
+        txtPasillo.setText("A");
+        txtRack.setText("2");
+
+        // TODO: Cambiar por metodo no depreciado
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        planograma.setImageResource(R.drawable.planograma_4_7);
+                        txtPasillo.setText("A");
+                        txtRack.setText("2");
+                        break;
+                    case 1:
+                        planograma.setImageResource(R.drawable.planograma_2_8);
+                        txtPasillo.setText("A");
+                        txtRack.setText("2");
+                        break;
+                    case 2:
+                        planograma.setImageResource(R.drawable.planograma_1_7);
+                        txtPasillo.setText("A");
+                        txtRack.setText("3");
+                        break;
+                    default:
+                        planograma.setImageResource(R.drawable.planograma);
+                        txtPasillo.setText("");
+                        txtRack.setText("");
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    public void escanear_codigo ( View v ) {
-        escanear();
-    }
-
-    void escanear () {
+    private void escanear () {
         IntentIntegrator integrator = new IntentIntegrator(this.getActivity());
         integrator.setCaptureActivity(CapturaAuxiliar.class);
         integrator.setOrientationLocked(true);
