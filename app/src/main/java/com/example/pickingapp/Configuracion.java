@@ -1,13 +1,11 @@
 package com.example.pickingapp;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -30,12 +28,12 @@ public class Configuracion extends AppCompatActivity {
 		if (!intent.getStringExtra("firstFragment").equals("none")) {
 			firstFragment = new AyudaFragment();
 			bottomNavigationView.setSelectedItemId(R.id.nav_faq);
-			// TODO: Cambiar el titulo del actionbar (PickUp)
+			getSupportActionBar().setTitle("Ayuda");
 		}
 		else {
 			firstFragment = new ConfigFragment();
 			bottomNavigationView.setSelectedItemId(R.id.nav_settings);
-			// TODO: Cambiar el titulo del actionbar (PickUp)
+			getSupportActionBar().setTitle("Configuración");
 		}
 //		getSupportFragmentManager().beginTransaction().replace(R.id.fragment_menu_pickup, firstFragment).commit();
 	}
@@ -54,11 +52,11 @@ public class Configuracion extends AppCompatActivity {
 							// Ninguno tiene break porque no hay fragments
 						case R.id.nav_settings:
 							selectedFragment = new ConfigFragment();
-							// TODO: Cambiar titulo action bar
+							getSupportActionBar().setTitle("Configuración");
 							break;
 						case R.id.nav_faq:
 							selectedFragment = new AyudaFragment();
-							// TODO: Cambiar titulo action bar
+							getSupportActionBar().setTitle("Ayuda");
 							break;
 						case R.id.nav_tutorial:
 							// TODO: Empezar fragment FAQ

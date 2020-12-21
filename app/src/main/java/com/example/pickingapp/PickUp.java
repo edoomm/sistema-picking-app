@@ -30,12 +30,12 @@ public class PickUp extends AppCompatActivity {
         if (!intent.getStringExtra("firstFragment").equals("none")) {
             firstFragment = new PickUpFragment();
             bottomNavigationView.setSelectedItemId(R.id.nav_pickup);
-            // TODO: Cambiar el titulo del actionbar (PickUp)
+            getSupportActionBar().setTitle("Pick Up");
         }
         else {
             firstFragment = new AlmacenFragment();
             bottomNavigationView.setSelectedItemId(R.id.nav_almacen);
-            // TODO: Cambiar el titulo del actionbar (Almacen)
+            getSupportActionBar().setTitle("Almacén");
         }
     }
 
@@ -52,7 +52,7 @@ public class PickUp extends AppCompatActivity {
                             return false;
                         case R.id.nav_pickup:
                             selectedFragment = new PickUpFragment();
-                            // TODO: Cambiar el titulo del actionbar (PickUp)
+                            getSupportActionBar().setTitle("Pick Up");
                             break;
                         case R.id.nav_cambio:
                             // TODO: Popup - Y cambiar a la modalidad surte almacen
@@ -60,7 +60,7 @@ public class PickUp extends AppCompatActivity {
                             return false;
                         case R.id.nav_almacen:
                             selectedFragment = new AlmacenFragment();
-                            // TODO: Cambiar el titulo del actionbar (Almacen)
+                            getSupportActionBar().setTitle("Almacén");
                             break;
                         case R.id.nav_config:
                             Intent intent1 = new Intent(getBaseContext(), Configuracion.class);
