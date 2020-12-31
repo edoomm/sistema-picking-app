@@ -1,4 +1,4 @@
-Si desean ver el readme pasado, pueden verlo [acá](https://github.com/edoomm/sistema-picking-web/blob/4fcd81062ef1f1677401cc6b8ebe644d74104860/README.md)
+[Atajo para README de clases java](app/src/main/java/com/example/pickingapp/)
 
 # Github (team workflow actualizado)
 
