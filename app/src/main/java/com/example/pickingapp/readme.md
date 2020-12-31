@@ -36,3 +36,29 @@ public void onPageSelected(int position) {
 Con esto, quedan cosas pendientes:
 - [ ] Creación de clase para la Base de Datos (conexión y queries)
 - [ ] Creacioón de clase seleccionadorá de imágnes del planograma
+
+## [Database.java](Database.java)
+Clase para realizar consultas a la base de datos
+
+### Parametros
+- context: el contexto de la *activity* donde se realiza la consulta
+- query: *String* con la consulta sql que desean realizar
+- callback: una clase donde se sobreescribirá el método para la funcionalidad, una vez obtenido el resultado de la consulta.
+
+En la función callback van a recibir un parámentro JSONArray con el resultado de la consulta, en caso de un fallo este parámetro va a ser null
+
+```java
+//Ejemplo de como usar la clase
+Database.query(getContext(), "SELECT * FROM producto", new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                if(response == null){} //si es null, no se realizo la consulta correctamente
+                    Log.i("Connection", "Hubo un fallo :(");
+                }
+                else{ // Aqui pueden meter la funcionalidad, mondar a llamar a una funacion que realice la funcionalidad con la respueste
+                    Log.i("Connection", response+"");
+                    mostrarProductos(response);
+                }
+            }
+        });
+```
