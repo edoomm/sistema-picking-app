@@ -90,7 +90,7 @@ public class PickUpFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
 
-        planograma.setImageResource(R.drawable.planograma_4_7);
+        planograma.setImageResource(R.drawable.planograma_1_7);
         txtPasillo.setText("A");
         txtRack.setText("2");
 
@@ -105,7 +105,7 @@ public class PickUpFragment extends Fragment {
             public void onPageSelected(int position) {
                 switch (position) {
                     case 0:
-                        planograma.setImageResource(R.drawable.planograma_4_7);
+                        planograma.setImageResource(R.drawable.planograma_1_7);
                         txtPasillo.setText("A");
                         txtRack.setText("2");
                         break;
