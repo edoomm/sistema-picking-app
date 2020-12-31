@@ -17,7 +17,7 @@ A través de este `PK` es posible (con ayuda del equipo de web, que definirá lo
 
 ![ejemlocacion!](https://lh3.googleusercontent.com/pw/ACtC-3dFqVy0Yt6ub8C_--lApj17_pny1TCrgmCyqiDYq9FB9sbm8bjmDoFUv30V-GeTMIVxrddZJgD7afP1iY45JshxSO7kISw1y1j62zJ5rDHJ3NJjCWKe_AfE-b8m5m2O8d0SxxNCy2XuAfWIpg_M2pxk=w576-h150-no?authuser=0)
 
-**Para poder conseguir el efecto de cambio de ubicación** se cambian las imagenes, todas [ya se encuentran en el repositorio](../../../../res/drawable/), llevan por nombre `planogra[ma|a]_[# col]_[# fila].png` y con ayuda del método `setOnPageChangeListener` (depreciado, se deberá cambiar en un futuro) y la creación del objeto `ViewPager.OnPageChangeListener` con sobreescritura en su método `onPageSelected(int position)` es posible a través de la lista de modelos obtener el `CardView` seleccionado y con él, su ubicación.
+**Para poder conseguir el efecto de cambio de ubicación** se cambian las imagenes, todas [ya se encuentran en el repositorio](../../../../res/drawable/), llevan por nombre `planogra[ma|m]_[# col]_[# fila].png` y con ayuda del método `setOnPageChangeListener` (depreciado, se deberá cambiar en un futuro) y la creación del objeto `ViewPager.OnPageChangeListener` con sobreescritura en su método `onPageSelected(int position)` es posible a través de la lista de modelos obtener el `CardView` seleccionado y con él, su ubicación.
 
 ```java
 // Ejemplo para obtener la ubicación de cualquier CardView
