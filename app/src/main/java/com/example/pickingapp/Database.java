@@ -13,13 +13,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Database {
 
 	 public static void query(Context context, String query, final VolleyCallback callback){
-		String url = "http://192.168.1.69/web/app/query.php";
+		String url = URLs.URL_QUERY;
 		StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
 				new Response.Listener<String>() {
 					@Override
