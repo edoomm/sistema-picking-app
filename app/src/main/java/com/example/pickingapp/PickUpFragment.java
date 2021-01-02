@@ -22,14 +22,18 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import org.json.*;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class PickUpFragment extends Fragment {
+public class PickUpFragment extends Fragment implements VolleyCallback{
 
-    ViewPager viewPager;
-    Adapter adapter;
-    List<Model> models;
+    private ViewPager viewPager;
+    private Adapter adapter;
+    private List<Model> models;
+    private ArrayList<ArrayList<String>> attributes;
 
     @Nullable
     @Override
@@ -46,6 +50,8 @@ public class PickUpFragment extends Fragment {
                     }
                 }
         );
+
+        viewPager =  (ViewPager) view.findViewById(R.id.productsPager);
 
         //btnEscaneo
         Button btnEscaneo = view.findViewById(R.id.button_scan);
@@ -73,6 +79,36 @@ public class PickUpFragment extends Fragment {
         escanear();
     }
 
+    @Override
+    public void onSucces (JSONArray response) {
+        try {
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject producto = response.getJSONObject(i);
+                String sku = producto.getString("sku");
+                String descripcion = producto.getString("descripcion");
+                models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+            }
+            adapter = new Adapter(models, getContext());
+            viewPager.setAdapter(adapter);
+            viewPager.setPadding(130, 0, 130, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addModel ( String a, String b) {
+        ArrayList<String> aux = new ArrayList<>();
+        aux.add(a);
+        aux.add(b);
+        attributes.add(aux);
+        //adapter.notifyDataSetChanged();
+    }
+
+    public void addModel ( Model m ) {
+        models.add(m);
+        //adapter.notifyDataSetChanged();
+    }
+
     private void setViewPagerUp (View view) {
         ImageView planograma = view.findViewById(R.id.imgPlanograma);
         TextView txtPasillo = view.findViewById(R.id.txtPasillo);
@@ -80,22 +116,22 @@ public class PickUpFragment extends Fragment {
 
         // Creacion de card views
         models = new ArrayList<>();
-        models.add(new Model("SKU: 508241", "LENTES PRE GRADUADOS AZUL", "A.01.01.02"));
-        models.add(new Model("SKU: 508754", "TRENZADO TIPO PIEL", "A.04.03.05"));
-        models.add(new Model("SKU: 508755", "KPKMEX", "A.04.03.06"));
+        String query = "select * from producto;";
+        Database.query(getContext(), query, this);
 
         adapter = new Adapter(models, getContext());
-
+        /*
         viewPager =  (ViewPager) view.findViewById(R.id.productsPager);
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
+         */
 
         planograma.setImageResource(R.drawable.planograma_1_7);
         txtPasillo.setText("A");
         txtRack.setText("2");
 
         // TODO: Cambiar por metodo no depreciado
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
