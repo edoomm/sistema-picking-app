@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     void ingresar ( String numero ) {
-        Database.query(this, "SELECT nombre FROM Operador WHERE num_empleado = '" + txtNumEmpl.getText() + "'", new VolleyCallback() {
+        Database.query(this, "SELECT nombre FROM Operador WHERE num_empleado = '" + numero + "'", new VolleyCallback() {
             @Override
             public void onSucces(JSONArray response) {
                 if (response == null) {
@@ -78,13 +78,6 @@ public class MainActivity extends AppCompatActivity  {
                 }
             }
         });
-//        if ( numero.equals("123456789") ) {
-//            startActivity(new Intent(this, Menu.class));
-//        } else {
-//            EditText textNoEmpleado = findViewById(R.id.txtNoEmpleado);
-//            textNoEmpleado.getText().clear();
-//            Toast.makeText(getApplicationContext(), "Número no reconocido, escanee su número de empleado", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     void mostrar_main () {
