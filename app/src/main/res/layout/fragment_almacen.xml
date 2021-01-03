@@ -35,17 +35,32 @@
         app:layout_constraintVertical_bias="0.022" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/pasillo_almacen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ubicación: Producto"
+        android:text="Pasillo:"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.063" />
+        app:layout_constraintVertical_bias="0.177" />
+
+    <TextView
+        android:id="@+id/rack_almacen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rack:"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.898"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.177" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -70,14 +85,14 @@
         app:layout_constraintVertical_bias="0.0">
 
         <Button
-            android:id="@+id/button_surte_almcaen"
+            android:id="@+id/button_reabastecer"
             android:layout_width="wrap_content"
             android:layout_height="73dp"
             android:layout_marginRight="15dp"
             android:text="Reabastecer" />
 
         <Button
-            android:id="@+id/button_reabastecer"
+            android:id="@+id/button_surte_almacen"
             android:layout_width="170dp"
             android:layout_height="73dp"
             android:layout_marginLeft="15dp"
@@ -96,15 +111,27 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/planograma_almacen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/pasillo_almacen"
         app:layout_constraintVertical_bias="0.134"
         app:srcCompat="@drawable/planograma" />
+
+    <TextView
+        android:id="@+id/sku_seleccionado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sku seleccionado:"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/planograma_almacen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.313" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
