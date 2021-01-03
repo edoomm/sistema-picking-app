@@ -1,7 +1,9 @@
 package com.example.pickingapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -63,11 +65,15 @@ public class MainActivity extends AppCompatActivity  {
                     }
                     else {
                         try {
-                            Toast.makeText(getApplicationContext(), "¡Bienvenido " + response.getJSONObject(0).getString("nombre") + "!", Toast.LENGTH_SHORT).show();
+                            // saving num_empl
+                            SharedPreferences preferences = getApplicationContext().getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("num_empleado", numero);
+                            editor.apply();
+
+                            // acessing system
+//                            Toast.makeText(getApplicationContext(), "¡Bienvenido " + response.getJSONObject(0).getString("nombre") + "!", Toast.LENGTH_SHORT).show();
                             mostrarMenu();
-                        } catch (JSONException jsone) {
-                            Toast.makeText(getApplicationContext(), "Ocurrió un error al tratar de recopilar la información de la base de datos", Toast.LENGTH_SHORT).show();
-                            Log.i("JSONExcpetion", jsone.getMessage());
                         }
                         catch (Exception e) {
                             Toast.makeText(getApplicationContext(), "Ocurrió un error", Toast.LENGTH_SHORT).show();
@@ -106,6 +112,25 @@ public class MainActivity extends AppCompatActivity  {
             ingresar( result.getContents() );
         }
         super.onActivityResult(request_code, result_code, data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+        confirmacion.setTitle("¿Seguro que desea salir de la aplicación?");
+        confirmacion.setPositiveButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                moveTaskToBack(true);
+            }
+        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog dialog = confirmacion.create();
+        dialog.show();
     }
 
 }

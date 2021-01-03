@@ -73,14 +73,5 @@ public class PickUp extends AppCompatActivity {
                 }
             };
 
-    // What to do when the camera has scanned something
-    @Override
-    protected void onActivityResult (int request_code, int result_code, Intent data) {
-        // result stores the result of scanned stuff
-        if(result_code != RESULT_CANCELED && data != null) {
-            IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
-            Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
-            super.onActivityResult(request_code, result_code, data);
-        }
-    }
+
 }
