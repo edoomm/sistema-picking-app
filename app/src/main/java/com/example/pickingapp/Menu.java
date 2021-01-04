@@ -32,7 +32,6 @@ public class Menu extends AppCompatActivity implements BottomNavigationView.OnNa
     }
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
-        // TODO: Mensaje de confirmación para salir de la aplicación
         AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
         confirmacion.setTitle("¿Seguro que desea salir?");
         confirmacion.setPositiveButton("Salir", new DialogInterface.OnClickListener() {
@@ -52,8 +51,24 @@ public class Menu extends AppCompatActivity implements BottomNavigationView.OnNa
 
         //Toast.makeText(getApplicationContext(), "Hasta pronto", Toast.LENGTH_SHORT).show();
 
+    }
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+        confirmacion.setTitle("¿Seguro que desea salir?");
+        confirmacion.setPositiveButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                salir();
+                // finish();
+            }
+        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-
-        // TODO: Limpiar la navegación para atrás cuando se le de click en **salir** (es decir que no se pueda regresar al menu principal a través del botón **atrás**).
+            }
+        });
+        AlertDialog dialog = confirmacion.create();
+        dialog.show();
     }
 }

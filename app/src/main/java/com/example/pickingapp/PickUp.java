@@ -20,8 +20,6 @@ public class PickUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_up);
 
-
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_pickup);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
@@ -56,10 +54,6 @@ public class PickUp extends AppCompatActivity {
                             selectedFragment = new PickUpFragment();
                             getSupportActionBar().setTitle("Pick Up");
                             break;
-                        case R.id.nav_cambio:
-                            // TODO: Popup - Y cambiar a la modalidad surte almacen
-                            Toast.makeText(getApplicationContext(), "Aca debe ir un popup explicando el surte almacen y cambiando a esa modalidad", Toast.LENGTH_SHORT).show();
-                            return false;
                         case R.id.nav_almacen:
                             selectedFragment = new AlmacenFragment();
                             getSupportActionBar().setTitle("Almacén");
@@ -79,14 +73,5 @@ public class PickUp extends AppCompatActivity {
                 }
             };
 
-    // What to do when the camera has scanned something
-    @Override
-    protected void onActivityResult (int request_code, int result_code, Intent data) {
-        // result stores the result of scanned stuff
-        if(result_code != RESULT_CANCELED && data != null) {
-            IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
-            Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
-            super.onActivityResult(request_code, result_code, data);
-        }
-    }
+
 }

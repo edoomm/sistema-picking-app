@@ -59,8 +59,9 @@ public class Configuracion extends AppCompatActivity {
 							getSupportActionBar().setTitle("Ayuda");
 							break;
 						case R.id.nav_tutorial:
-							// TODO: Empezar fragment FAQ
-							// TODO: Cuando se empiece este debe aparecer en activity_configuracion.xml un boton flotante que servira para mandar una nueva pregunta
+							selectedFragment = new TutorialFragment();
+							getSupportActionBar().setTitle("Tutorial");
+							break;
 						default:
 							return false;
 					}
