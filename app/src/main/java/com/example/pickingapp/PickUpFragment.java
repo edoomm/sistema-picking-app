@@ -28,6 +28,7 @@ import org.json.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import static android.app.Activity.RESULT_CANCELED;
 
@@ -36,14 +37,14 @@ public class PickUpFragment extends Fragment {
     private ViewPager viewPager;
     private Adapter adapter;
     private List<Model> models;
-    private JSONArray productInfo;
+    private Vector<InformacionProducto> productos;
     private Boolean state;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_pick_up, container, false);
-        state = false;
         //btn lista
         Button btnLista = view.findViewById(R.id.button_lista);
         btnLista.setOnClickListener(
@@ -55,9 +56,6 @@ public class PickUpFragment extends Fragment {
                     }
                 }
         );
-
-        viewPager =  (ViewPager) view.findViewById(R.id.productsPager);
-
         //btnEscaneo
         Button btnEscaneo = view.findViewById(R.id.button_scan);
         btnEscaneo.setOnClickListener(new View.OnClickListener() {
@@ -67,33 +65,33 @@ public class PickUpFragment extends Fragment {
                 if(preferences.getString("escaneo_preferido", "escaner").equals("escaner")){
                     Intent intent = new Intent(view.getContext(), Escaneo.class);
                     startActivity(intent);
-                }
-                else{
+                } else {
                     escanear_codigo(view);
                 }
-
             }
         });
-
+        // Estado de recolección
+        // false: ningún producto ha sido escaneado
+        // true: se escaneó un producto y se debe escanear ahora la caja
+        state = false;
+        // Inicializamos vector de informacion
+        productos = new Vector<>();
+        // Cargamos los productos a el ViewPager
         setViewPagerUp(view);
 
         return view;
     }
 
+    // Guardamos la información del servidor en el vector productos
     private void setProductInfo( JSONArray info ) {
-        productInfo = info;
-        /*
         try {
-            for (int i = 0; i < productInfo.length(); i++) {
-                JSONObject producto = productInfo.getJSONObject(i);
-                String sku = producto.getString("sku");
-                String descripcion = producto.getString("descripcion");
-                Toast.makeText(getContext(), "SKU: " + sku + "Descripción: " + descripcion, Toast.LENGTH_SHORT).show();
+            for ( int i = 0 ; i < info.length() ; i++ ) {
+                JSONObject informacion_modelo = info.getJSONObject(i);
+                productos.add(new InformacionProducto(informacion_modelo));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-         */
     }
 
     public void escanear_codigo ( View v ) {
@@ -102,22 +100,33 @@ public class PickUpFragment extends Fragment {
 
 
     private void setViewPagerUp (View view) {
+        // Inicializamos atributos/variables
+        viewPager =  (ViewPager) view.findViewById(R.id.productsPager);
+        models = new ArrayList<>();
         ImageView planograma = view.findViewById(R.id.imgPlanograma);
         TextView txtPasillo = view.findViewById(R.id.txtPasillo);
         TextView txtRack = view.findViewById(R.id.txtRack);
 
-        String query = "select c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, ohc.contenedor_id from control as c right join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku inner join operador_has_control as ohc on c.control_id = ohc.control_id where ohc.num_empleado = \"111111\";";
+        // Hacemos la consulta de la recolección asignada a el operador
+        SharedPreferences preferences = view.getContext().getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+        String numEmpleado = preferences.getString("num_empleado", "0");
+        if ( numEmpleado.equals("0") ) {
+            Toast.makeText(
+                    view.getContext(),
+                    "No se pudo cargar la información del empleado. Por favor reinicie la sesión.",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+        String query = "select c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\";";
         Database.query(getContext(), query, new VolleyCallback() {
             @Override
             public void onSucces(JSONArray response) {
                 try {
-                    models = new ArrayList<>();
                     setProductInfo(response);
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject producto = response.getJSONObject(i);
                         String sku = producto.getString("sku");
                         String descripcion = producto.getString("descripcion");
-
                         models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
                     }
                     adapter = new Adapter(models, getContext());
@@ -178,47 +187,52 @@ public class PickUpFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         //retrieve scan result
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        // Obtenemos el index de la página seleccionada
+        int index = viewPager.getCurrentItem();
         if ( scanningResult.getContents() != null ) {
             if ( !state ) { // Aún no se ha escaneado ningún producto
                 try {
-                    int index = viewPager.getCurrentItem();
-                    JSONObject model_info = productInfo.getJSONObject(index);
-                    String sku = model_info.getString("sku");
-                    String scanned_sku = scanningResult.getContents();
-                    if ( sku.equals(scanned_sku) ) {
+                    InformacionProducto producto = productos.get(index);
+                    int sku = producto.getSku();
+                    String  sku_escaneado = scanningResult.getContents();
+                    if ( String.valueOf(sku).equals(sku_escaneado) ) {
+                        // indicamos que hay un producto escaneado
                         state = true;
-                        Toast.makeText(getContext(),"Correct product", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
                         IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-                        // use forSupportFragment or forFragment method to use fragments instead of activity
                         integrator.setOrientationLocked(true);
                         integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
                         integrator.setCaptureActivity(CapturaAuxiliar.class);
-                        integrator.setPrompt("Escanee la caja");
+                        integrator.setPrompt("Escanee el contenedor " + producto.getContenedor());
                         integrator.initiateScan();
                     } else {
-                        Toast.makeText(getContext(),"Please scan indicated product", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Por favor, escanea el producto: " + producto.getDescripcion(), Toast.LENGTH_SHORT).show();
                     }
-                    /*
-                    Toast.makeText(getContext(),
-                            model_info.getString("sku") + " " +
-                            model_info.getString("descripcion") + " " +
-                            model_info.getString("contenedor_id")
-                            , Toast.LENGTH_SHORT).show();
-                     */
-                    //Toast.makeText(getContext(), model.getTitle() + " " + model.getDesc(), Toast.LENGTH_SHORT).show();
                 } catch ( Exception e ) {
-                    Toast.makeText(getContext(), "Error: PickupFragment OnActivityResultException", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getStackTrace().toString(), Toast.LENGTH_SHORT).show();
                 }
-            } else {
+            } else { // Ya escaneamos un producto, debemos ponerlo en el contenedor
                 try {
-                    int index = viewPager.getCurrentItem();
-                    JSONObject model_info = productInfo.getJSONObject(index);
-                    String contenedor = model_info.getString("contenedor_id");
-                    String scanned_contenedor = scanningResult.getContents();
-                    if ( contenedor.equals(scanned_contenedor) ) {
+                    InformacionProducto producto = productos.get(index);
+                    String contenedor = String.valueOf(producto.getContenedor());
+                    String contenedor_escaneado = scanningResult.getContents();
+                    if ( contenedor.equals(contenedor_escaneado) ) { // El contenedor escaneado es el asignado
+                        // Volvemos al estado inicial
                         state = false;
-                        Toast.makeText(getContext(),"Correct container", Toast.LENGTH_SHORT).show();
+                        producto.decrementarApartado();
+                        productos.set(index, producto);
+                        Toast.makeText(getContext(),"Restantes: " + producto.getApartado(), Toast.LENGTH_SHORT).show();
+                        if ( producto.hasApartado() ) {
+                            escanear();
+                        }
+                    } else {
+                        Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
+                        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
+                        integrator.setOrientationLocked(true);
+                        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
+                        integrator.setCaptureActivity(CapturaAuxiliar.class);
+                        integrator.setPrompt("Escanee el contenedor " + producto.getContenedor());
+                        integrator.initiateScan();
                     }
                 } catch ( Exception e ) {
                     Toast.makeText(getContext(), "Error: PickupFragment OnActivityResultException", Toast.LENGTH_SHORT).show();
@@ -229,12 +243,17 @@ public class PickUpFragment extends Fragment {
     }
 
     private void escanear () {
-        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-        // use forSupportFragment or forFragment method to use fragments instead of activity
-        integrator.setOrientationLocked(true);
-        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
-        integrator.setCaptureActivity(CapturaAuxiliar.class);
-        integrator.setPrompt("Escanee el producto");
-        integrator.initiateScan();
+        int index_producto = viewPager.getCurrentItem();
+        InformacionProducto producto = productos.get(index_producto);
+        if ( producto.hasApartado() ) {
+            IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
+            integrator.setOrientationLocked(true);
+            integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
+            integrator.setCaptureActivity(CapturaAuxiliar.class);
+            integrator.setPrompt("Escanee el producto");
+            integrator.initiateScan();
+        } else {
+            Toast.makeText(getContext(), "Este producto ya ha sido recolectado.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
