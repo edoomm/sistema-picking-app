@@ -131,6 +131,11 @@ public class PickUpFragment extends Fragment {
         return view;
     }
 
+    private void pasar_a_siguiente_item() {
+        int index_seleccionado = viewPager.getCurrentItem();
+        viewPager.setCurrentItem(index_seleccionado + 1);
+    }
+
     private void generar_transaccion(InformacionProducto producto) {
         int contenedor = producto.getContenedor();
         int sku = producto.getSku();
@@ -247,6 +252,7 @@ public class PickUpFragment extends Fragment {
                             escanear();
                         } else {
                             generar_transaccion(producto);
+                            pasar_a_siguiente_item();
                         }
                     } else {
                         Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
