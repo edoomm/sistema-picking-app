@@ -15,13 +15,17 @@ import android.view.View;
 
 import com.example.pickingapp.ui.main.SectionsPagerAdapter;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class Lista extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lista);
-		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+		ArrayList<InformacionProducto> productos = (ArrayList<InformacionProducto>) getIntent().getSerializableExtra("InformacionProductos");
+		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), productos);
 		ViewPager viewPager = findViewById(R.id.view_pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
 		TabLayout tabs = findViewById(R.id.tabs);

@@ -6,23 +6,57 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.pickingapp.InformacionProducto;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 public class PageViewModel extends ViewModel {
 
+	private ArrayList<InformacionProducto> productos;
+
 	private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
+
+	public void setInformacionProductos (ArrayList<InformacionProducto> productos) {
+		this.productos = productos;
+	}
+
 	private LiveData<List<String>> lista_apartados = Transformations.map(mIndex, new Function<Integer, List<String>>() {
 		@Override
 		public List<String> apply(Integer input) {
+			ArrayList<String> cadenas = new ArrayList<>();
 			switch (input){
-				case 1:
-					return Arrays.asList("12345", "12346", "12347");
-				case 2:
-					return Arrays.asList("12349", "12350", "12351");
-				case 3:
-					return Arrays.asList("12345", "12346", "12347","12349", "12350", "12351");
+				case 1: // Por escanear
+					for ( int i = 0 ; i < productos.size() ; i++ ) {
+						InformacionProducto producto = productos.get(i);
+						if ( producto.hasApartado() ) {
+							String cadena = "";
+							cadena = "SKU: " + producto.getSku();
+							cadenas.add(cadena);
+						}
+					}
+					return cadenas;
+				case 2: // Escaneado
+					for ( int i = 0 ; i < productos.size() ; i++ ) {
+						InformacionProducto producto = productos.get(i);
+						if ( !producto.hasApartado() ) {
+							String cadena = "";
+							cadena = "SKU: " + producto.getSku();
+							cadenas.add(cadena);
+						}
+					}
+					return cadenas;
+				case 3: // Toda la lista
+					for ( int i = 0 ; i < productos.size() ; i++ ) {
+						InformacionProducto producto = productos.get(i);
+						String cadena = "";
+						cadena = "SKU: " + producto.getSku();
+						cadenas.add(cadena);
+					}
+					return cadenas;
 				default:
 					return Arrays.asList();
 			}
