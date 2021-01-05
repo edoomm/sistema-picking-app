@@ -36,26 +36,34 @@ public class PickUpFragment extends Fragment {
 
     private ViewPager viewPager;
     private Adapter adapter;
-    private List<Model> models;
+    private ArrayList<Model> models;
     private Vector<InformacionProducto> productos;
     private Boolean state;
+    private String numEmpleado;
+    private Context context;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_pick_up, container, false);
+        context = view.getContext();
+        // Obtenemos el número de empleado del operador
+        SharedPreferences preferences = view.getContext().getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+        numEmpleado = preferences.getString("num_empleado", "");
 
-        View view = inflater.inflate(R.layout.fragment_pick_up, container, false);
-        //btn lista
+        // btnLista
         Button btnLista = view.findViewById(R.id.button_lista);
-        btnLista.setOnClickListener(
-                new View.OnClickListener(){
+        btnLista.setOnClickListener( new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(view.getContext(), Lista.class);
+                        intent.putExtra("InformacionProductos", productos);
                         startActivity(intent);
                     }
                 }
         );
+
         //btnEscaneo
         Button btnEscaneo = view.findViewById(R.id.button_scan);
         btnEscaneo.setOnClickListener(new View.OnClickListener() {
@@ -70,16 +78,73 @@ public class PickUpFragment extends Fragment {
                 }
             }
         });
+
+        // buttonFinalizarPicking
+        Button btnFinPicking = view.findViewById(R.id.button_finalizar_picking);
+        btnFinPicking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for ( int i = 0 ; i < productos.size() ; i++ ) {
+                    if ( productos.get(i).hasApartado() ) {
+                        Toast.makeText(
+                                view.getContext(),
+                                "Aún falta recolectar: " + productos.get(i).getDescripcion(),
+                                Toast.LENGTH_LONG
+                        ).show();
+                        break;
+                    } else {
+                        // Función para generar la remesa
+                    }
+                }
+            }
+        });
+
         // Estado de recolección
         // false: ningún producto ha sido escaneado
         // true: se escaneó un producto y se debe escanear ahora la caja
         state = false;
+
         // Inicializamos vector de informacion
         productos = new Vector<>();
-        // Cargamos los productos a el ViewPager
-        setViewPagerUp(view);
+
+        String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \"" + numEmpleado + "\" and ohc.control_id not in (select control_id from transaccion) order by ohc.prioridad;";
+        Database.query(getContext(), query, new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                try {
+                    setProductInfo(response);
+                    models = new ArrayList<>();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject producto = response.getJSONObject(i);
+                        String sku = producto.getString("sku");
+                        String descripcion = producto.getString("descripcion");
+                        models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                    }
+                    // Cargamos los productos a el ViewPager
+                    setViewPagerUp();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return view;
+    }
+
+    private void generar_transaccion(InformacionProducto producto) {
+        int contenedor = producto.getContenedor();
+        int sku = producto.getSku();
+        int control_id = producto.getControl_id();
+        int cantidad = producto.getApartadoGlobal() * -1;
+
+        String query = "insert into transaccion values (null, \""+numEmpleado+"\", "+contenedor+", "+sku+", "+control_id+", NOW(), \"P\", "+cantidad+");";
+
+        Database.query(getContext(), query, new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                Toast.makeText(getContext(), "Transacción realizada con éxito.", Toast.LENGTH_LONG ).show();
+            }
+        });
     }
 
     // Guardamos la información del servidor en el vector productos
@@ -99,48 +164,23 @@ public class PickUpFragment extends Fragment {
     }
 
 
-    private void setViewPagerUp (View view) {
+    private void setViewPagerUp () {
         // Inicializamos atributos/variables
         viewPager =  (ViewPager) view.findViewById(R.id.productsPager);
-        models = new ArrayList<>();
         ImageView planograma = view.findViewById(R.id.imgPlanograma);
-        TextView txtPasillo = view.findViewById(R.id.txtPasillo);
-        TextView txtRack = view.findViewById(R.id.txtRack);
+        TextView txtPasillo = view.findViewById(R.id.textPasillo);
+        TextView txtRack = view.findViewById(R.id.textRack);
 
-        // Hacemos la consulta de la recolección asignada a el operador
-        SharedPreferences preferences = view.getContext().getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
-        String numEmpleado = preferences.getString("num_empleado", "0");
-        if ( numEmpleado.equals("0") ) {
-            Toast.makeText(
-                    view.getContext(),
-                    "No se pudo cargar la información del empleado. Por favor reinicie la sesión.",
-                    Toast.LENGTH_LONG
-            ).show();
-        }
-        String query = "select c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\";";
-        Database.query(getContext(), query, new VolleyCallback() {
-            @Override
-            public void onSucces(JSONArray response) {
-                try {
-                    setProductInfo(response);
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject producto = response.getJSONObject(i);
-                        String sku = producto.getString("sku");
-                        String descripcion = producto.getString("descripcion");
-                        models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
-                    }
-                    adapter = new Adapter(models, getContext());
-                    viewPager.setAdapter(adapter);
-                    viewPager.setPadding(130, 0, 130, 0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
-        planograma.setImageResource(R.drawable.planograma_1_7);
-        txtPasillo.setText("A");
-        txtRack.setText("2");
+        adapter = new Adapter(models, getContext());
+        viewPager.setAdapter(adapter);
+        viewPager.setPadding(130, 0, 130, 0);
+
+        SeleccionadorPlanograma seleccionador = new SeleccionadorPlanograma();
+        InformacionProducto producto = productos.get(0);
+        txtPasillo.setText("Pasillo: " + producto.getPasillo());
+        txtRack.setText("Rack: " + producto.getRack());
+        planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -150,30 +190,11 @@ public class PickUpFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                /*
-                switch (position) {
-                    case 0:
-                        planograma.setImageResource(R.drawable.planograma_1_7);
-                        txtPasillo.setText("A");
-                        txtRack.setText("2");
-                        break;
-                    case 1:
-                        planograma.setImageResource(R.drawable.planograma_2_8);
-                        txtPasillo.setText("A");
-                        txtRack.setText("2");
-                        break;
-                    case 2:
-                        planograma.setImageResource(R.drawable.planograma_1_7);
-                        txtPasillo.setText("A");
-                        txtRack.setText("3");
-                        break;
-                    default:
-                        planograma.setImageResource(R.drawable.planograma);
-                        txtPasillo.setText("");
-                        txtRack.setText("");
-                        break;
-                }
-                 */
+                SeleccionadorPlanograma seleccionador = new SeleccionadorPlanograma();
+                InformacionProducto producto = productos.get(position);
+                txtPasillo.setText("Pasillo: " + producto.getPasillo());
+                txtRack.setText("Rack: " + producto.getRack());
+                planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
             }
 
             @Override
@@ -224,6 +245,8 @@ public class PickUpFragment extends Fragment {
                         Toast.makeText(getContext(),"Restantes: " + producto.getApartado(), Toast.LENGTH_SHORT).show();
                         if ( producto.hasApartado() ) {
                             escanear();
+                        } else {
+                            generar_transaccion(producto);
                         }
                     } else {
                         Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();

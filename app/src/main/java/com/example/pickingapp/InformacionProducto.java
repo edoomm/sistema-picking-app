@@ -2,27 +2,57 @@ package com.example.pickingapp;
 
 import org.json.JSONObject;
 
-public class InformacionProducto {
+import java.io.Serializable;
+
+public class InformacionProducto implements Serializable {
+    private int control_id;
     private int sku;
+    private int apartado_global;
     private int apartado;
     private int id_sucursal;
     private String descripcion;
     private String pasillo;
     private int rack;
+    private int columna;
+    private int nivel;
     private int contenedor;
 
     public InformacionProducto (JSONObject json_informacion) {
         try {
+            control_id = json_informacion.getInt("control_id");
             sku = json_informacion.getInt("sku");
             apartado = json_informacion.getInt("apartado");
+            apartado_global = json_informacion.getInt("apartado");
             id_sucursal = json_informacion.getInt("id_sucursal");
             descripcion = json_informacion.getString("descripcion");
             pasillo = json_informacion.getString("pasillo");
             rack = json_informacion.getInt("rack");
+            columna = json_informacion.getInt("columna");
+            nivel = json_informacion.getInt("nivel");
             contenedor = json_informacion.getInt("contenedor_id");
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+    }
+
+    public int getColumna() {
+        return columna;
+    }
+
+    public void setColumna(int columna) {
+        this.columna = columna;
+    }
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
+
+    public int getApartadoGlobal() {
+        return apartado_global;
     }
 
     public int getApartado() {
@@ -87,5 +117,13 @@ public class InformacionProducto {
 
     public void setContenedor(int contenedor) {
         this.contenedor = contenedor;
+    }
+
+    public int getControl_id() {
+        return control_id;
+    }
+
+    public void setControl_id(int control_id) {
+        this.control_id = control_id;
     }
 }
