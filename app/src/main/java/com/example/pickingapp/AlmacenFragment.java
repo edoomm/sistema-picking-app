@@ -321,7 +321,6 @@ public class AlmacenFragment extends Fragment{
 
     @Override
     public void onActivityResult(int request_code, int result_code, Intent data) {
-        Log.i("Almacen", "on activity result");
         if (result_code != getActivity().RESULT_CANCELED && data != null) {
             IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
             switch (estatus_escaneo){
