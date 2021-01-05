@@ -1,18 +1,15 @@
 Por hacer:
 
 1. **Pickup** (Doni y Magallon)
-   1. Mostrar ID_Linea y Genérico en card views
-   2. Proceso de escanear (producto y contenedor; mensajes de error, etc)
-   3. Proceso de producto faltante
-
-2. **Almacén** (Dani)
-   1. Buscar y ubicar producto
-   2. Surte almacen
-   3. Reabastecer (permisos: solo el lider lo pueda hacer)
+   1. Proceso de producto faltante
+   2. Eliminación/Modificación de CardViews
+   3. Proceso de remisión (se tendrá que ver el domingo con Edgar)
+   4. Actualización de controles asignados (ordenados por prioridad)
+   5. Asignación (propia) de contenedores (antes de iniciar el proceso de pickup)
    
-3. **FAQ** (Luis)
+2. **FAQ** (Luis)
    1. Lógica de creación de preguntas (creacion de HTMLs)
    2. Correcto acomodo del layout del XML (puedes usar de referencia el de [youtube](https://support.google.com/youtube/?hl=en#topic=9257498))
    3. Actualizaciones del layout de preguntas (periodicamente y lógica para actualizar en la app)
 
-4 **Tutorial y login (app) + Registro lider de almacen, backdoor, ... (web)** (Eduardo)
+3 **Tutorial y login (app) + Registro lider de almacen, backdoor, # Apartados ... (web)** (Eduardo) **(para el 07/01)**
