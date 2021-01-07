@@ -16,6 +16,8 @@ public class InformacionProducto implements Serializable {
     private int columna;
     private int nivel;
     private int contenedor;
+    private int estado; // 0 sin recolectar, 1 : recolectado, 2 : producto faltante
+
 
     public InformacionProducto (JSONObject json_informacion) {
         try {
@@ -30,9 +32,18 @@ public class InformacionProducto implements Serializable {
             columna = json_informacion.getInt("columna");
             nivel = json_informacion.getInt("nivel");
             contenedor = json_informacion.getInt("contenedor_id");
+            estado = 0;
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 
     public int getColumna() {
