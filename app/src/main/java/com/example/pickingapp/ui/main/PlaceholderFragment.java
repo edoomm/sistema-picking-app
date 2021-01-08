@@ -13,20 +13,26 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.pickingapp.InformacionProducto;
 import com.example.pickingapp.R;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class PlaceholderFragment extends Fragment {
 
+	private static ArrayList<InformacionProducto> productos;
+
 	private static final String ARG_SECTION_NUMBER = "section_number";
 
 	private PageViewModel pageViewModel;
 
-	public static PlaceholderFragment newInstance(int index) {
+	public static PlaceholderFragment newInstance(int index, ArrayList<InformacionProducto> p) {
+		productos = p;
 		PlaceholderFragment fragment = new PlaceholderFragment();
 		Bundle bundle = new Bundle();
 		bundle.putInt(ARG_SECTION_NUMBER, index);
@@ -38,6 +44,8 @@ public class PlaceholderFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
+
+		pageViewModel.setInformacionProductos(productos);
 		int index = 1;
 		if (getArguments() != null) {
 			index = getArguments().getInt(ARG_SECTION_NUMBER);

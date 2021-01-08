@@ -8,7 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.pickingapp.InformacionProducto;
 import com.example.pickingapp.R;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -19,9 +23,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	@StringRes
 	private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
 	private final Context mContext;
+	private ArrayList<InformacionProducto> productos;
 
-	public SectionsPagerAdapter(Context context, FragmentManager fm) {
+	public SectionsPagerAdapter(Context context, FragmentManager fm, ArrayList<InformacionProducto> p) {
 		super(fm);
+		productos = p;
 		mContext = context;
 	}
 
@@ -29,7 +35,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	public Fragment getItem(int position) {
 		// getItem is called to instantiate the fragment for the given page.
 		// Return a PlaceholderFragment (defined as a static inner class below).
-		return PlaceholderFragment.newInstance(position + 1);
+		return PlaceholderFragment.newInstance(position + 1, productos);
 	}
 
 	@Nullable

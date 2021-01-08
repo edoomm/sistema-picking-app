@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -44,6 +48,16 @@ public class AlmacenFragment extends Fragment{
     private TextView rack;
     private TextView skuSeleccionado;
     private Context context;
+    private int estatus_escaneo = -1;
+    private final int NO_ESCANEO = 0;
+    private final int SURTE_ALMACEN = 1;
+    private final int REABASTECER_SKU = 2;
+    private final int REABASTECER_UBICACION = 3;
+    private final int SOLICITAR_SKU = 1;
+    private final int SOLICITAR_UBICACION = 2;
+    private final int SOLICITAR_CANTIDAD = 3;
+    String skuReabasto = "";
+    String ubicacionReabasto = "";
 
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +96,7 @@ public class AlmacenFragment extends Fragment{
             }
         });
         SearchView searchView = view.findViewById(R.id.SKU_searchView);
+        searchView.setInputType(InputType.TYPE_CLASS_NUMBER);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -117,7 +132,89 @@ public class AlmacenFragment extends Fragment{
             }
         });
 
+        /* REABASTECER */
+        Button btnReabastecer = (Button) view.findViewById(R.id.button_reabastecer);
+        btnReabastecer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences preferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+                String noEmpleado = preferences.getString("num_empleado", "0");
+                Database.query(context, "SELECT `tipo_usuario` FROM `usuario` WHERE `operador_num_empleado`='" + noEmpleado + "'", new VolleyCallback() {
+                    @Override
+                    public void onSucces(JSONArray response) {
+                        try {
+                            JSONObject usuario = response.getJSONObject(0);
+                            if(usuario.getInt("tipo_usuario") == 1)
+                                reabastecer(SOLICITAR_SKU);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
         return view;
+    }
+
+    void reabastecer(int estatus){
+        if(estatus == SOLICITAR_SKU) {
+            Log.i("Almacen", "Reabasteciendo");
+            AlertDialog.Builder confirmacion = new AlertDialog.Builder(context);
+            confirmacion.setTitle("Escanea el sku a reabastecer");
+            confirmacion.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    estatus_escaneo = REABASTECER_SKU;
+                    //TODO: escaneo con pistola
+                    escanear();
+                }
+            }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            AlertDialog dialog = confirmacion.create();
+            dialog.show();
+        }
+        else if(estatus == SOLICITAR_UBICACION){
+            AlertDialog.Builder confirmacion = new AlertDialog.Builder(context);
+            confirmacion.setTitle("Escanea la ubicacion de sku: "+skuReabasto);
+            confirmacion.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    estatus_escaneo = REABASTECER_UBICACION;
+                    //TODO: escaneo con pistola
+                    escanear();
+                }
+            }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            AlertDialog dialog = confirmacion.create();
+            dialog.show();
+        }
+        else if(estatus == SOLICITAR_CANTIDAD){
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Ingresa la cantidad");
+            final EditText entrada = new EditText(context);
+            entrada.setInputType(InputType.TYPE_CLASS_NUMBER);
+            builder.setView(entrada);
+            builder.setPositiveButton("Reabastecer", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int cantidad = Integer.parseInt(entrada.getText().toString());
+                    enviarTransaccion(skuReabasto, "RA", cantidad);
+                }
+            }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.show();
+        }
     }
 
     void surteAlmacen(){
@@ -131,7 +228,7 @@ public class AlmacenFragment extends Fragment{
             confirmacion.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    enviarTransaccion(sku);
+                    enviarTransaccion(sku, "SA", -1);
                 }
             }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
@@ -148,7 +245,7 @@ public class AlmacenFragment extends Fragment{
                 metodo.setPositiveButton("SKU: " + sku, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        enviarTransaccion(sku);
+                        enviarTransaccion(sku, "SA", -1);
                     }
                 });
             }
@@ -159,6 +256,7 @@ public class AlmacenFragment extends Fragment{
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //TODO: escanear codigo con pistola
+                    estatus_escaneo = SURTE_ALMACEN;
                     escanear();
                 }
             });
@@ -172,18 +270,17 @@ public class AlmacenFragment extends Fragment{
         }
     }
 
-    void enviarTransaccion(String sku){
+    void enviarTransaccion(String sku, String tipoMovimiento, int cantidad){
         SharedPreferences preferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
         String noEmpleado = preferences.getString("num_empleado", "0");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String horaYFecha = simpleDateFormat.format(new Date());
-        String tipoMovimiento = "SA";
-        int cantidad = -1;
         Database.insert(
                 context,
                 "INSERT INTO `transaccion` (`transaccion_id`, `num_empleado`, `contenedor_id`, `sku`, `control_id`, `hora_realizada`, `tipo_movimiento`, `cantidad`) " +
                         "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')"
         );
+        Toast.makeText(context, "Hecho", Toast.LENGTH_SHORT).show();
     }
 
     void mostrarProductos(JSONArray response){
@@ -224,11 +321,71 @@ public class AlmacenFragment extends Fragment{
 
     @Override
     public void onActivityResult(int request_code, int result_code, Intent data) {
-        Log.i("Almacen", "on activity result");
         if (result_code != getActivity().RESULT_CANCELED && data != null) {
             IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
-            enviarTransaccion(result.getContents());
-            Log.i("Almacen", "Sku escaneado: "+result.getContents());
+            switch (estatus_escaneo){
+                case SURTE_ALMACEN:
+                    Log.i("Almacen", "Sku escaneado: "+result.getContents());
+                    Database.query(context, "SELECT `sku` FROM `producto` WHERE `sku`='" + result.getContents() + "'", new VolleyCallback() {
+                        @Override
+                        public void onSucces(JSONArray response) {
+                            if (response == null || response.length() == 0){
+                                Toast.makeText(context, "No se encontró el sku en la base de datos", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                enviarTransaccion(result.getContents(), "SU", -1);
+                            }
+                        }
+                    });
+                    break;
+                case REABASTECER_UBICACION:
+                    ubicacionReabasto = result.getContents();
+                    Log.i("Almacen", "Ubicacion escaneada: "+result.getContents());
+                    Database.query(context, "SELECT `ubicacion` FROM ubicacion WHERE sku='" + skuReabasto + "'", new VolleyCallback() {
+                        @Override
+                        public void onSucces(JSONArray response) {
+                            boolean ubicacionCorrecta = false;
+                            if (response == null || response.length() == 0){
+                                Toast.makeText(context, "No se encontró la unicación en la base de datos", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                for (int i = 0; i < response.length(); i++) {
+                                    try {
+                                        JSONObject ubicacion = response.getJSONObject(i);
+                                        if (ubicacion.getString("ubicacion").equals(ubicacionReabasto)) {
+                                            reabastecer(SOLICITAR_CANTIDAD);
+                                            ubicacionCorrecta = true;
+                                            break;
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            if(ubicacionCorrecta == false)
+                                Toast.makeText(context, "La ubicación no pertenece al sku: " + skuReabasto, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    break;
+                case REABASTECER_SKU:
+                    skuReabasto = result.getContents();
+                    Log.i("Almacen", "Sku escaneado: "+result.getContents());
+                    Database.query(context, "SELECT `sku` FROM `producto` WHERE `sku`='" + skuReabasto + "'", new VolleyCallback() {
+                        @Override
+                        public void onSucces(JSONArray response) {
+                            if (response == null || response.length() == 0){
+                                Toast.makeText(context, "No se encontró el sku en la base de datos", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                reabastecer(SOLICITAR_UBICACION);
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    break;
+	        }
+	        estatus_escaneo = NO_ESCANEO;
         }
     }
 }
