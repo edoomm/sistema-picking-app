@@ -144,11 +144,19 @@ public class AlmacenFragment extends Fragment{
                     public void onSucces(JSONArray response) {
                         try {
                             JSONObject usuario = response.getJSONObject(0);
-                            if(usuario.getInt("tipo_usuario") == 1)
+                            if(usuario.getInt("tipo_usuario") == 1) {
                                 reabastecer(SOLICITAR_SKU);
+                            }
+                            else {
+                                Toast.makeText(context, "Solo el líder de almacen puede reabastecer", Toast.LENGTH_LONG).show();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        if (response == null)
+                            Toast.makeText(context, "Solo el líder de almacen puede reabastecer", Toast.LENGTH_LONG).show();
+                        else if (response.length() == 0)
+                          Toast.makeText(context, "Solo el líder de almacen puede reabastecer", Toast.LENGTH_LONG).show();
                     }
                 });
             }
