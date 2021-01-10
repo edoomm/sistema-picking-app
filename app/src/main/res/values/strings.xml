@@ -7,6 +7,7 @@
     <string name="logo_content_desc">Logo</string>
 
     //Reporte de problemas o preguntas
+    <string name="user_id"></string>
     <string name="title_reporte_problemas">Reportar problemas</string>
     <string name="title_campo_captura">Por favor, ingresa una breve descripción del problema</string>
     <string name="title_boton_reporte_problemas">Enviar</string>
