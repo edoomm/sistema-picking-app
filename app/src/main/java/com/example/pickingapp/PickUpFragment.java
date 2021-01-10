@@ -1,38 +1,32 @@
 package com.example.pickingapp;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
-
-import static android.app.Activity.RESULT_CANCELED;
 
 public class PickUpFragment extends Fragment {
 
@@ -118,6 +112,18 @@ public class PickUpFragment extends Fragment {
         models = new ArrayList<>();
 
         // Verificamos que la información no se ha cargado
+        verificarInformacion();
+
+        // Estado de recolección
+        // 0: ningún producto ha sido escaneado
+        // 1: se escaneó un producto y se debe escanear ahora la caja asignada
+        // 2: se debe asignar el contenedor
+        estado = 0;
+
+        return view;
+    }
+
+    private void verificarInformacion() {
         if ( ProductInformationSingleton.getProductInformation() == null ) {
             // Obtenemos la información del picking desde la base de datos
             String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \"" + numEmpleado + "\" and ohc.control_id not in (select control_id from transaccion where cantidad != 0) order by ohc.prioridad and c.asignado = 2;";
@@ -143,18 +149,13 @@ public class PickUpFragment extends Fragment {
             // configuramos los botones
             configurarBotones();
         }
-
-        // Estado de recolección
-        // 0: ningún producto ha sido escaneado
-        // 1: se escaneó un producto y se debe escanear ahora la caja asignada
-        // 2: se debe asignar el contenedor
-        estado = 0;
-
-        return view;
     }
 
     private void pasar_a_siguiente_item() {
         int index_seleccionado = viewPager.getCurrentItem();
+        Model actual_model = models.get(index_seleccionado);
+        actual_model.setTitle(actual_model.getTitle()+"\n(Ya se ha recolectado)");
+        models.set(index_seleccionado, actual_model);
         viewPager.setCurrentItem(index_seleccionado + 1);
     }
 
@@ -346,6 +347,35 @@ public class PickUpFragment extends Fragment {
             integrator.initiateScan();
         } else {
             Toast.makeText(getContext(), "Este producto ya ha sido recolectado.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.options_menu_pickup, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.actulizar_control:
+                verificarInformacion();
+                Toast.makeText(getContext(), "El control está actualizado", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.asignar_contenedores:
+                Toast.makeText(getContext(), "Verificando contenedores...", Toast.LENGTH_SHORT).show();
+                ((PickUp)getActivity()).validarContenedores();
+                Toast.makeText(getContext(), "Los contenedores están asignados", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
