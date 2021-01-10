@@ -14,7 +14,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class Database {
 		requestQueue.add(stringRequest);
 	}
 
-	public static void insert(Context context, String insertQuery){
+	public static void insert(Context context, String insertQuery, VolleyCallback volleyCallback){
 		String url = URLs.URL_INSERT;
 		StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
 				new Response.Listener<String>() {

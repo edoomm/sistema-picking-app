@@ -1,13 +1,10 @@
 package com.example.pickingapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -278,8 +275,12 @@ public class AlmacenFragment extends Fragment{
         Database.insert(
                 context,
                 "INSERT INTO `transaccion` (`transaccion_id`, `num_empleado`, `contenedor_id`, `sku`, `control_id`, `hora_realizada`, `tipo_movimiento`, `cantidad`) " +
-                        "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')"
-        );
+                        "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')",
+                new VolleyCallback() {
+                    @Override
+                    public void onSucces(JSONArray response) {
+                    }
+                });
         Toast.makeText(context, "Hecho", Toast.LENGTH_SHORT).show();
     }
 
