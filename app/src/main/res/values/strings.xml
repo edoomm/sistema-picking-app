@@ -4,6 +4,7 @@
     <string name="tab_text_1">Por escanear</string>
     <string name="tab_text_2">Escaneado</string>
     <string name="tab_text_3">Todo</string>
+    <string name="logo_content_desc">Logo</string>
 
     //Reporte de problemas o preguntas
     <string name="title_reporte_problemas">Reportar problemas</string>

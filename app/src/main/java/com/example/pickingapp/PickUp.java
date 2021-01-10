@@ -1,12 +1,16 @@
 package com.example.pickingapp;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -14,7 +18,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
+
 public class PickUp extends AppCompatActivity {
+
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +32,8 @@ public class PickUp extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_pickup);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+
+        context = this;
 
         // Deciding which fragment will show first
         Fragment firstFragment;
@@ -51,10 +62,15 @@ public class PickUp extends AppCompatActivity {
                             startActivity(intent);
                             return false;
                         case R.id.nav_pickup:
+                            getIntent().putExtra("firstFragment", "PickUpFragment");
+                            getIntent().putExtra("secondFragment", "none");
+                            validarContenedores();
                             selectedFragment = new PickUpFragment();
                             getSupportActionBar().setTitle("Pick Up");
                             break;
                         case R.id.nav_almacen:
+                            getIntent().putExtra("firstFragment", "none");
+                            getIntent().putExtra("secondFragment", "AlmacentFragment");
                             selectedFragment = new AlmacenFragment();
                             getSupportActionBar().setTitle("Almacén");
                             break;
@@ -73,5 +89,48 @@ public class PickUp extends AppCompatActivity {
                 }
             };
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        validarContenedores();
+    }
+
+    void validarContenedores(){
+        Intent intent = getIntent();
+        if (!intent.getStringExtra("firstFragment").equals("none")){
+            SharedPreferences preferences = getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+            String noEmpleado = preferences.getString("num_empleado", "0");;
+            String query = "SELECT DISTINCT c.control_id, c.id_sucursal " +
+                    "FROM control AS c " +
+                    "INNER JOIN `operador_has_control` AS ohc ON c.control_id = ohc.control_id " +
+                    "WHERE ohc.num_empleado = '" + noEmpleado + "' AND ohc.contenedor_id IS NULL  GROUP BY c.id_sucursal";
+            Database.query(this, query, new VolleyCallback() {
+                @Override
+                public void onSucces(JSONArray response) {
+                    if(response != null && response.length() > 0) {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                        alertDialog.setTitle("Tiene sucursales sin contenedor, por favor, asigne los contenedores");
+                        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                iniciarContenedorActivity();
+                            }
+                        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(context, Menu.class));
+                            }
+                        }).setCancelable(false);
+                        AlertDialog dialog = alertDialog.create();
+                        dialog.show();
+                    }
+                }
+            });
+        }
+    }
+
+    void iniciarContenedorActivity(){
+        startActivity(new Intent(this, Contenedor.class));
+    }
 
 }

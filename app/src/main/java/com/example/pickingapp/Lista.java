@@ -24,8 +24,7 @@ public class Lista extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lista);
-		ArrayList<InformacionProducto> productos = (ArrayList<InformacionProducto>) getIntent().getSerializableExtra("InformacionProductos");
-		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), productos);
+		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 		ViewPager viewPager = findViewById(R.id.view_pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
 		TabLayout tabs = findViewById(R.id.tabs);
