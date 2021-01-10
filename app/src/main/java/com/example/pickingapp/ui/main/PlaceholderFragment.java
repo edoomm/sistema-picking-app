@@ -31,8 +31,7 @@ public class PlaceholderFragment extends Fragment {
 
 	private PageViewModel pageViewModel;
 
-	public static PlaceholderFragment newInstance(int index, ArrayList<InformacionProducto> p) {
-		productos = p;
+	public static PlaceholderFragment newInstance(int index) {
 		PlaceholderFragment fragment = new PlaceholderFragment();
 		Bundle bundle = new Bundle();
 		bundle.putInt(ARG_SECTION_NUMBER, index);
@@ -45,7 +44,6 @@ public class PlaceholderFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
 
-		pageViewModel.setInformacionProductos(productos);
 		int index = 1;
 		if (getArguments() != null) {
 			index = getArguments().getInt(ARG_SECTION_NUMBER);

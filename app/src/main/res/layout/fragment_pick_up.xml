@@ -75,17 +75,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/button_finalizar_picking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/productsPager"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="145dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        android:text="Finalizar picking" />
-
     <LinearLayout
         android:gravity="center"
         android:layout_height="80dp"

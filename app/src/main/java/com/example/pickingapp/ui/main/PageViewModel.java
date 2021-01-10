@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.pickingapp.InformacionProducto;
+import com.example.pickingapp.ProductInformationSingleton;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -16,17 +17,12 @@ import java.util.Vector;
 
 public class PageViewModel extends ViewModel {
 
-	private ArrayList<InformacionProducto> productos;
-
 	private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
-
-	public void setInformacionProductos (ArrayList<InformacionProducto> productos) {
-		this.productos = productos;
-	}
 
 	private LiveData<List<String>> lista_apartados = Transformations.map(mIndex, new Function<Integer, List<String>>() {
 		@Override
 		public List<String> apply(Integer input) {
+			ArrayList<InformacionProducto> productos = ProductInformationSingleton.getProductInformation().getProductos();
 			ArrayList<String> cadenas = new ArrayList<>();
 			switch (input){
 				case 1: // Por escanear
