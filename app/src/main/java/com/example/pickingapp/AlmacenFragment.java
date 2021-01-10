@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,13 +30,13 @@ import androidx.fragment.app.Fragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class AlmacenFragment extends Fragment{
 
@@ -396,5 +398,11 @@ public class AlmacenFragment extends Fragment{
 	        }
 	        estatus_escaneo = NO_ESCANEO;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.standar_actionbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
