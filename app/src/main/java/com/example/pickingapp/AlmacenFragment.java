@@ -1,16 +1,15 @@
 package com.example.pickingapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,13 +30,13 @@ import androidx.fragment.app.Fragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class AlmacenFragment extends Fragment{
 
@@ -144,11 +143,19 @@ public class AlmacenFragment extends Fragment{
                     public void onSucces(JSONArray response) {
                         try {
                             JSONObject usuario = response.getJSONObject(0);
-                            if(usuario.getInt("tipo_usuario") == 1)
+                            if(usuario.getInt("tipo_usuario") == 1) {
                                 reabastecer(SOLICITAR_SKU);
+                            }
+                            else {
+                                Toast.makeText(context, "Solo el líder de almacen puede reabastecer", Toast.LENGTH_LONG).show();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        if (response == null)
+                            Toast.makeText(context, "Solo el líder de almacen puede reabastecer", Toast.LENGTH_LONG).show();
+                        else if (response.length() == 0)
+                          Toast.makeText(context, "Solo el líder de almacen puede reabastecer", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -278,8 +285,12 @@ public class AlmacenFragment extends Fragment{
         Database.insert(
                 context,
                 "INSERT INTO `transaccion` (`transaccion_id`, `num_empleado`, `contenedor_id`, `sku`, `control_id`, `hora_realizada`, `tipo_movimiento`, `cantidad`) " +
-                        "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')"
-        );
+                        "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')",
+                new VolleyCallback() {
+                    @Override
+                    public void onSucces(JSONArray response) {
+                    }
+                });
         Toast.makeText(context, "Hecho", Toast.LENGTH_SHORT).show();
     }
 
@@ -387,5 +398,11 @@ public class AlmacenFragment extends Fragment{
 	        }
 	        estatus_escaneo = NO_ESCANEO;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.standar_actionbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
