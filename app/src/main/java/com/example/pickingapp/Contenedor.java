@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -47,9 +48,23 @@ public class Contenedor extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				//TODO: escaneo con pistola
-				escanear();
+				if ( indiceSucursalActual == numeroDeSucursales ) {
+					Toast.makeText(getApplicationContext(), "Ya se han asignado todas las sucursales.", Toast.LENGTH_LONG).show();
+				}
+				else {
+					escanear();
+				}
+
 			}
 		});
+		findViewById(R.id.btn_iniciar_picking).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+		findViewById(R.id.btn_iniciar_picking).setVisibility(View.INVISIBLE);
+
 		cargarSucursales();
 	}
 
@@ -130,6 +145,9 @@ public class Contenedor extends AppCompatActivity {
 		if (request_code != Activity.RESULT_CANCELED && data != null){
 			IntentResult result = IntentIntegrator.parseActivityResult(request_code, result_code, data);
 			asignarContenedor(indiceSucursalActual, result.getContents());
+			if ( indiceSucursalActual == numeroDeSucursales ) {
+				findViewById(R.id.btn_iniciar_picking).setVisibility(View.VISIBLE);
+			}
 		}
 	}
 	@Override

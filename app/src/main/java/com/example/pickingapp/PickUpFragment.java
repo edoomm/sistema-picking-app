@@ -1,10 +1,17 @@
 package com.example.pickingapp;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import android.app.FragmentTransaction;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -119,12 +126,11 @@ public class PickUpFragment extends Fragment {
         productos = new ArrayList<>();
         models = new ArrayList<>();
 
-        // Verificamos que la información no se ha cargado
-        verificarInformacion();
-
         // Inicializamos sonidos
-        successSound = MediaPlayer.create(getContext(), R.raw.zxing_beep);
+        successSound = MediaPlayer.create(getContext(), R.raw.success);
         errorSound = MediaPlayer.create(getContext(), R.raw.error);
+
+        verificarInformacion();
 
         // Estado de recolección
         // 0: ningún producto ha sido escaneado
@@ -139,6 +145,7 @@ public class PickUpFragment extends Fragment {
         if ( ProductInformationSingleton.getProductInformation() == null ) {
             // Obtenemos la información del picking desde la base de datos
             String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad != 0) and (c.asignado = 0) and (ohc.contenedor_id is not null) order by ohc.prioridad;";
+
             Database.query(getContext(), query, new VolleyCallback() {
                 @Override
                 public void onSucces(JSONArray response) {
@@ -206,27 +213,24 @@ public class PickUpFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ProductInformationSingleton.getProductInformation(productos, models);
+        if ( ProductInformationSingleton.getProductInformation() == null ) {
+            ProductInformationSingleton.getProductInformation(productos, models);
+        } else {
+            ProductInformationSingleton.getProductInformation().setProductos(productos);
+            ProductInformationSingleton.getProductInformation().setModels(models);
+        }
+
     }
 
     public void escanear_codigo ( View v ) {
-        escanear();
-    }
+        int index_producto = viewPager.getCurrentItem();
+        InformacionProducto producto = productos.get(index_producto);
+        if ( producto.hasApartado() ) {
+            escanear("Escanee el producto: " + producto.getSku());
+        } else {
+            Toast.makeText(getContext(), "Este producto ya ha sido recolectado.", Toast.LENGTH_SHORT).show();
+        }
 
-    private void escanear () {
-        int index = viewPager.getCurrentItem();
-        InformacionProducto producto = productos.get(index);
-        escanear("Escanee el producto: " + producto.getSku());
-    }
-
-    private void escanear (String mensaje) {
-        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-        integrator.setOrientationLocked(true);
-        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
-        integrator.setCaptureActivity(CapturaAuxiliar.class);
-        integrator.setBeepEnabled(false);
-        integrator.setPrompt(mensaje);
-        integrator.initiateScan();
     }
 
     private void setViewPagerUp () {
@@ -237,7 +241,7 @@ public class PickUpFragment extends Fragment {
         TextView txtRack = view.findViewById(R.id.textRack);
 
 
-        adapter = new Adapter(ProductInformationSingleton.getProductInformation().getModels(), getContext());
+        adapter = new Adapter(models, getContext());
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
 
@@ -259,7 +263,6 @@ public class PickUpFragment extends Fragment {
                 txtRack.setText("Rack: " + producto.getRack());
                 planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
             }
-
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
@@ -312,6 +315,22 @@ public class PickUpFragment extends Fragment {
         }
     }
 
+
+    private void escanear () {
+        int index = viewPager.getCurrentItem();
+        InformacionProducto producto = productos.get(index);
+        escanear("Escanee el producto: " + producto.getSku());
+    }
+
+    private void escanear (String mensaje) {
+        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
+        integrator.setOrientationLocked(true);
+        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
+        integrator.setCaptureActivity(CapturaAuxiliar.class);
+        integrator.setBeepEnabled(false);
+        integrator.setPrompt(mensaje);
+        integrator.initiateScan();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

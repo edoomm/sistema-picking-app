@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public class InformacionProducto implements Serializable {
+public class InformacionProducto implements Serializable, Comparable {
     private int control_id;
     private int sku;
     private int apartado_global;
@@ -17,6 +17,7 @@ public class InformacionProducto implements Serializable {
     private int nivel;
     private int contenedor;
     private int estado; // 0 sin recolectar, 1 : recolectado, 2 : producto faltante
+    private int prioridad;
 
 
     public InformacionProducto (JSONObject json_informacion) {
@@ -33,6 +34,7 @@ public class InformacionProducto implements Serializable {
             nivel = json_informacion.getInt("nivel");
             contenedor = json_informacion.getInt("contenedor_id");
             estado = 0;
+            prioridad = json_informacion.getInt("prioridad");
         } catch ( Exception e ) {
             e.printStackTrace();
         }
@@ -136,5 +138,10 @@ public class InformacionProducto implements Serializable {
 
     public void setControl_id(int control_id) {
         this.control_id = control_id;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.prioridad - ((InformacionProducto) o).prioridad;
     }
 }
