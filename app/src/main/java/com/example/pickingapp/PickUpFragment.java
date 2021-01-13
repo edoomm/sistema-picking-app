@@ -1,9 +1,17 @@
 package com.example.pickingapp;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import android.app.FragmentTransaction;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +47,10 @@ public class PickUpFragment extends Fragment {
     private Context context;
     private View view;
 
+    // Sonidos para el escaneo
+    private MediaPlayer successSound;
+    private MediaPlayer errorSound;
+
     void configurarBotones () {
         // btnLista
         Button btnLista = view.findViewById(R.id.button_lista);
@@ -62,7 +74,14 @@ public class PickUpFragment extends Fragment {
                     Intent intent = new Intent(view.getContext(), Escaneo.class);
                     startActivity(intent);
                 } else {
-                    escanear_codigo(view);
+                    int index = viewPager.getCurrentItem();
+                    InformacionProducto producto = productos.get(index);
+                    if ( producto.hasApartado() ) {
+                        escanear_codigo(view);
+                    }
+                    else {
+                        Toast.makeText(getContext(), "El producto ya ha sido recolectado.", Toast.LENGTH_LONG ).show();
+                    }
                 }
             }
         });
@@ -83,12 +102,8 @@ public class PickUpFragment extends Fragment {
                     int control_id = producto.getControl_id();
                     int cantidad = 0;
                     String query = "insert into transaccion values (null, \""+numEmpleado+"\", "+contenedor+", "+sku+", "+control_id+", NOW(), \"P\", "+cantidad+");";
-                    Database.query(getContext(), query, new VolleyCallback() {
-                        @Override
-                        public void onSucces(JSONArray response) {
-                            Toast.makeText(getContext(), "Producto reportado y notificado al líder de almacén.", Toast.LENGTH_LONG ).show();
-                        }
-                    });
+                    Database.insert(getContext(), query);
+                    Toast.makeText(getContext(), "Producto reportado y notificado al líder de almacén.", Toast.LENGTH_LONG ).show();
                 } else if ( estado_actual_producto == 1 ) {
                     Toast.makeText(getContext(), "El producto ya ha sido recolectado.", Toast.LENGTH_LONG ).show();
                 } else {
@@ -111,7 +126,10 @@ public class PickUpFragment extends Fragment {
         productos = new ArrayList<>();
         models = new ArrayList<>();
 
-        // Verificamos que la información no se ha cargado
+        // Inicializamos sonidos
+        successSound = MediaPlayer.create(getContext(), R.raw.success);
+        errorSound = MediaPlayer.create(getContext(), R.raw.error);
+
         verificarInformacion();
 
         // Estado de recolección
@@ -126,7 +144,8 @@ public class PickUpFragment extends Fragment {
     private void verificarInformacion() {
         if ( ProductInformationSingleton.getProductInformation() == null ) {
             // Obtenemos la información del picking desde la base de datos
-            String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \"" + numEmpleado + "\" and ohc.control_id not in (select control_id from transaccion where cantidad != 0) order by ohc.prioridad and c.asignado = 2;";
+            String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad != 0) and (c.asignado = 2) and (ohc.contenedor_id is not null) order by ohc.prioridad;";
+
             Database.query(getContext(), query, new VolleyCallback() {
                 @Override
                 public void onSucces(JSONArray response) {
@@ -194,13 +213,25 @@ public class PickUpFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ProductInformationSingleton.getProductInformation(productos, models);
+        if ( ProductInformationSingleton.getProductInformation() == null ) {
+            ProductInformationSingleton.getProductInformation(productos, models);
+        } else {
+            ProductInformationSingleton.getProductInformation().setProductos(productos);
+            ProductInformationSingleton.getProductInformation().setModels(models);
+        }
+
     }
 
     public void escanear_codigo ( View v ) {
-        escanear();
-    }
+        int index_producto = viewPager.getCurrentItem();
+        InformacionProducto producto = productos.get(index_producto);
+        if ( producto.hasApartado() ) {
+            escanear("Escanee el producto: " + producto.getSku());
+        } else {
+            Toast.makeText(getContext(), "Este producto ya ha sido recolectado.", Toast.LENGTH_SHORT).show();
+        }
 
+    }
 
     private void setViewPagerUp () {
         // Inicializamos atributos/variables
@@ -210,7 +241,7 @@ public class PickUpFragment extends Fragment {
         TextView txtRack = view.findViewById(R.id.textRack);
 
 
-        adapter = new Adapter(ProductInformationSingleton.getProductInformation().getModels(), getContext());
+        adapter = new Adapter(models, getContext());
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
 
@@ -232,13 +263,10 @@ public class PickUpFragment extends Fragment {
                 txtRack.setText("Rack: " + producto.getRack());
                 planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
             }
-
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
     }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -246,108 +274,62 @@ public class PickUpFragment extends Fragment {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         // Obtenemos el index de la página seleccionada
         int index = viewPager.getCurrentItem();
+        InformacionProducto producto = productos.get(index);
         if ( scanningResult.getContents() != null ) {
             if ( estado == 0 ) { // Aún no se ha escaneado ningún producto
-                try {
-                    InformacionProducto producto = productos.get(index);
-                    int sku = producto.getSku();
-                    String  sku_escaneado = scanningResult.getContents();
-                    if ( String.valueOf(sku).equals(sku_escaneado) ) {
-                        // indicamos que hay un producto escaneado
-                        estado = 1;
-
-                        Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
-                        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-                        integrator.setOrientationLocked(true);
-                        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
-                        integrator.setCaptureActivity(CapturaAuxiliar.class);
-                        integrator.setPrompt("Escanee el contenedor " + producto.getContenedor());
-                        integrator.initiateScan();
-                    } else {
-                        Toast.makeText(getContext(), "Por favor, escanea el producto: " + producto.getDescripcion(), Toast.LENGTH_SHORT).show();
-                        escanear();
-                    }
-                } catch ( Exception e ) {
-                    Toast.makeText(getContext(), e.getStackTrace().toString(), Toast.LENGTH_SHORT).show();
+                int sku = producto.getSku();
+                String  sku_escaneado = scanningResult.getContents();
+                if ( String.valueOf(sku).equals(sku_escaneado) ) {
+                    successSound.start();
+                    // indicamos que hay un producto escaneado
+                    estado = 1;
+                    Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
+                    escanear("Escanee el contenedor " + producto.getContenedor());
+                } else {
+                    errorSound.start();
+                    Toast.makeText(getContext(), "Por favor, escanea el producto: " + producto.getDescripcion(), Toast.LENGTH_SHORT).show();
+                    escanear("Escanee el producto: " + producto.getSku());
                 }
             } else if ( estado == 1 ) { // Ya escaneamos un producto, debemos ponerlo en el contenedor
-                try {
-                    InformacionProducto producto = productos.get(index);
-                    String contenedor = String.valueOf(producto.getContenedor());
-                    String contenedor_escaneado = scanningResult.getContents();
-                    if ( contenedor.equals(contenedor_escaneado) ) { // El contenedor escaneado es el asignado
-                        // Volvemos al estado inicial
-                        estado = 0;
-                        producto.decrementarApartado();
-                        productos.set(index, producto);
-                        Toast.makeText(getContext(),"Restantes: " + producto.getApartado(), Toast.LENGTH_SHORT).show();
-                        if ( producto.hasApartado() ) {
-                            escanear();
-                        } else {
-                            generar_transaccion(producto);
-                            pasar_a_siguiente_item();
-                        }
+                String contenedor = String.valueOf(producto.getContenedor());
+                String contenedor_escaneado = scanningResult.getContents();
+                if ( contenedor.equals(contenedor_escaneado) ) { // El contenedor escaneado es el asignado
+                    // Volvemos al estado inicial
+                    estado = 0;
+                    producto.decrementarApartado();
+                    productos.set(index, producto);
+                    Toast.makeText(getContext(),"Restantes: " + producto.getApartado(), Toast.LENGTH_SHORT).show();
+                    successSound.start();
+                    if ( producto.hasApartado() ) {
+                        escanear();
                     } else {
-                        Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
-                        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-                        integrator.setOrientationLocked(true);
-                        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
-                        integrator.setCaptureActivity(CapturaAuxiliar.class);
-                        integrator.setPrompt("Escanee el contenedor " + producto.getContenedor());
-                        integrator.initiateScan();
+                        generar_transaccion(producto);
+                        pasar_a_siguiente_item();
                     }
-                } catch ( Exception e ) {
-                    Toast.makeText(getContext(), "Error: PickupFragment OnActivityResultException", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            } else {
-                // Escaneamos el contenedor asignado a el control y se realiza el proceso de decrementar por uno
-                try {
-                    InformacionProducto producto = productos.get(index);
-                    String contenedor_escaneado = scanningResult.getContents();
-                    if ( !contenedor_escaneado.equals("1") ) { // El contenedor escaneado es diferente al 1
-                        // Volvemos al estado inicial
-                        estado = 0;
-                        producto.decrementarApartado();
-                        productos.set(index, producto);
-                        Toast.makeText(getContext(),"Restantes: " + producto.getApartado(), Toast.LENGTH_SHORT).show();
-                        if ( producto.hasApartado() ) {
-                            escanear();
-                        } else {
-                            producto.setEstado(1);
-                            generar_transaccion(producto);
-                            pasar_a_siguiente_item();
-                        }
-                    } else {
-                        Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
-                        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-                        integrator.setOrientationLocked(true);
-                        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
-                        integrator.setCaptureActivity(CapturaAuxiliar.class);
-                        integrator.setPrompt("Escanee el contenedor " + producto.getContenedor());
-                        integrator.initiateScan();
-                    }
-                } catch ( Exception e ) {
-                    Toast.makeText(getContext(), "Error: PickupFragment OnActivityResultException", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                } else {
+                    errorSound.start();
+                    Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
+                    escanear("Escanee el contenedor " + producto.getContenedor());
                 }
             }
         }
     }
 
+
     private void escanear () {
-        int index_producto = viewPager.getCurrentItem();
-        InformacionProducto producto = productos.get(index_producto);
-        if ( producto.hasApartado() ) {
-            IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
-            integrator.setOrientationLocked(true);
-            integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
-            integrator.setCaptureActivity(CapturaAuxiliar.class);
-            integrator.setPrompt("Escanee el producto " + producto.getSku());
-            integrator.initiateScan();
-        } else {
-            Toast.makeText(getContext(), "Este producto ya ha sido recolectado.", Toast.LENGTH_SHORT).show();
-        }
+        int index = viewPager.getCurrentItem();
+        InformacionProducto producto = productos.get(index);
+        escanear("Escanee el producto: " + producto.getSku());
+    }
+
+    private void escanear (String mensaje) {
+        IntentIntegrator integrator = new IntentIntegrator(this.getActivity()).forSupportFragment(this);
+        integrator.setOrientationLocked(true);
+        integrator.setDesiredBarcodeFormats( IntentIntegrator.ALL_CODE_TYPES );
+        integrator.setCaptureActivity(CapturaAuxiliar.class);
+        integrator.setBeepEnabled(false);
+        integrator.setPrompt(mensaje);
+        integrator.initiateScan();
     }
 
     @Override
