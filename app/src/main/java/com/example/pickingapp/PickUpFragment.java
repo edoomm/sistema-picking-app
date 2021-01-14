@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.IDNA;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -192,15 +193,27 @@ public class PickUpFragment extends Fragment {
         });
     }
 
+    private boolean contieneA ( InformacionProducto p ) {
+        for ( int i = 0 ; i < productos.size() ; i++ ) {
+            if ( p.getControl_id() == productos.get(i).getControl_id() ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Guardamos la información del servidor en el vector productos
     private void setProductInfo( JSONArray info ) {
         try {
             for ( int i = 0 ; i < info.length() ; i++ ) {
                 JSONObject informacion_modelo = info.getJSONObject(i);
-                productos.add(new InformacionProducto(informacion_modelo));
-                String sku = informacion_modelo.getString("sku");
-                String descripcion = informacion_modelo.getString("descripcion");
-                models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                if ( !contieneA(new InformacionProducto(informacion_modelo)) ) {
+                    productos.add(new InformacionProducto(informacion_modelo));
+                    String sku = informacion_modelo.getString("sku");
+                    String descripcion = informacion_modelo.getString("descripcion");
+                    models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                    Toast.makeText(getContext(), "Se añadió: " + informacion_modelo.get("sku"), Toast.LENGTH_LONG ).show();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -212,6 +225,21 @@ public class PickUpFragment extends Fragment {
             ProductInformationSingleton.getProductInformation().setModels(models);
         }
 
+    }
+
+    private int getSiguienteProductoAEscanear ( int sku ) {
+        int indice_siguiente_a_escanear = -1;
+        for ( int i = 0 ; i < productos.size() ; i++ ) {
+            InformacionProducto pr = productos.get(i);
+            if ( pr.getSku() == sku ) {
+                indice_siguiente_a_escanear = i;
+                if ( pr.hasApartado() ) {
+                    return i;
+                }
+            }
+
+        }
+        return indice_siguiente_a_escanear;
     }
 
     public void escanear_codigo ( View v ) {
@@ -237,7 +265,7 @@ public class PickUpFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
 
-        if (productos.size() > 0){
+        if (productos.size() > 0) {
             InformacionProducto producto = productos.get(0);
             txtPasillo.setText("Pasillo: " + producto.getPasillo());
             txtRack.setText("Rack: " + producto.getRack());
@@ -350,7 +378,6 @@ public class PickUpFragment extends Fragment {
             case R.id.asignar_contenedores:
                 Toast.makeText(getContext(), "Verificando contenedores...", Toast.LENGTH_SHORT).show();
                 ((PickUp)getActivity()).validarContenedores();
-                Toast.makeText(getContext(), "Los contenedores están asignados", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
