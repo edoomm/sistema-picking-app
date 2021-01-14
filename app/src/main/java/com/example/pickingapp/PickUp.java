@@ -138,7 +138,8 @@ public class PickUp extends AppCompatActivity {
     }
 
     void iniciarContenedorActivity(){
-        startActivity(new Intent(this, Contenedor.class));
+        Intent intent = new Intent(this, Contenedor.class);
+        startActivity(intent);
     }
 
 }

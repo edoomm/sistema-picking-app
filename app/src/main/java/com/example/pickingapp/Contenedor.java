@@ -303,6 +303,7 @@ public class Contenedor extends AppCompatActivity {
 		Intent intent = new Intent(this, PickUp.class);
 		intent.putExtra("firstFragment", "PickUpFragment");
 		intent.putExtra("secondFragment", "none");
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 }
