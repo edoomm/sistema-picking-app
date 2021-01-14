@@ -132,7 +132,7 @@ public class Contenedor extends AppCompatActivity {
 				"INNER JOIN `operador_has_control` AS ohc ON c.control_id = ohc.control_id " +
 				"WHERE ohc.num_empleado = '" + noEmpleado + "' " + /*"' AND ohc.contenedor_id IS NULL  " +*/
 				"AND ohc.control_id NOT IN (SELECT `control_id` FROM `transaccion` WHERE `cantidad` != 0) " +
-				"AND (c.asignado = 2) " +
+				"AND (c.asignado = 1) " +
 				"GROUP BY c.id_sucursal " +
 				"ORDER BY ohc.contenedor_id DESC";
 		Database.query(this, query, new VolleyCallback() {
