@@ -55,11 +55,11 @@ public class Contenedor extends AppCompatActivity {
 				if (adapter.getItem(position).getChecked()){
 					Log.i("Contenedor", "Clicked item " + position);
 					AlertDialog.Builder builder = new AlertDialog.Builder(context);
-					builder.setTitle("¿Eliminar conteneodor de sucursal: " + adapter.getItem(position).getSucursal() + "?");
+					builder.setTitle("¿Eliminar contenedor de sucursal: " + adapter.getItem(position).getSucursal() + "?");
 					builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							cambiarContenedor(adapter.getItem(position).getSucursal());
+							cambiarContenedor(adapter.getItem(position).getSucursal(), adapter.getItem(position).getContenedor());
 						}
 					}).setNegativeButton("No", new DialogInterface.OnClickListener() {
 						@Override
@@ -101,11 +101,15 @@ public class Contenedor extends AppCompatActivity {
 		cargarSucursales();
 	}
 
-	void cambiarContenedor(String idSucursal){
-		/* TODO: Corregir queries
+	void cambiarContenedor(String idSucursal, String idContenedor){
 		SharedPreferences preferences = getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
 		String noEmpleado = preferences.getString("num_empleado", "0");;
-		String query = "SELECT * FROM `control` WHERE `id_sucursal` = '" + idSucursal + "'";
+		String query = "SELECT c.control_id FROM `control` AS c " +
+				"LEFT JOIN `operador_has_control` AS ohc ON ohc.control_id = c.control_id " +
+				"WHERE c.id_sucursal = '" + idSucursal + "' " +
+				"AND ohc.contenedor_id = '" + idContenedor + "' " +
+				"AND c.asignado = 1 " +
+				"AND c.control_id IN (SELECT `control_id` FROM `transaccion` WHERE cantidad < 0)";
 		String queryUpdate = "UPDATE `operador_has_control` AS ohc " +
 				"INNER JOIN `control` AS c ON ohc.control_id = c.control_id " +
 				"SET ohc.contenedor_id = NULL " +
@@ -115,13 +119,16 @@ public class Contenedor extends AppCompatActivity {
 		Database.query(context, query, new VolleyCallback() {
 			@Override
 			public void onSucces(JSONArray response) {
-				if (response != null){
+				if (response != null && response.length() == 0){
+					Log.i("Contenedor", response.toString());
 					Database.insert(context, queryUpdate);
 					recreate();
 				}
+				else {
+					Toast.makeText(context, "El contenedor ya está en uso", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
-		*/
 	}
 
 	void cargarSucursales(){

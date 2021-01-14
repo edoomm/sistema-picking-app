@@ -352,6 +352,8 @@ public class PickUpFragment extends Fragment {
                 ((PickUp)getActivity()).validarContenedores();
                 Toast.makeText(getContext(), "Los contenedores están asignados", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.ver_contenedores:
+                startActivity(new Intent(getActivity(), Contenedor.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
