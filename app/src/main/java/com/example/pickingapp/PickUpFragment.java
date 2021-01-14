@@ -417,7 +417,7 @@ public class PickUpFragment extends Fragment {
                 verificarInformacion();
                 Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container);
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.detach(currentFragment);
+                fragmentTransaction.detach(currentFragment); // esta linea crashea
                 fragmentTransaction.attach(currentFragment);
                 fragmentTransaction.commit();
                 Toast.makeText(getContext(), "El control está actualizado", Toast.LENGTH_SHORT).show();
