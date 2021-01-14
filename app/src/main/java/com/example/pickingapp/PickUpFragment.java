@@ -414,13 +414,12 @@ public class PickUpFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
             case R.id.actulizar_control:
-                verificarInformacion();
-                Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container);
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.detach(currentFragment); // esta linea crashea
-                fragmentTransaction.attach(currentFragment);
-                fragmentTransaction.commit();
                 Toast.makeText(getContext(), "El control está actualizado", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), PickUp.class);
+                intent.putExtra("firstFragment", "PickUpFragment");
+                intent.putExtra("secondFragment", "none");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
             case R.id.asignar_contenedores:
                 Toast.makeText(getContext(), "Verificando contenedores...", Toast.LENGTH_SHORT).show();
