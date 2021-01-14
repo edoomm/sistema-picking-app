@@ -93,7 +93,7 @@ public class PickUp extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        validarContenedores();
+        //validarContenedores();
     }
 
     void validarContenedores(){

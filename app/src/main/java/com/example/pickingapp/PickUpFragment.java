@@ -36,6 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class PickUpFragment extends Fragment {
 
@@ -202,6 +204,15 @@ public class PickUpFragment extends Fragment {
         return false;
     }
 
+    private boolean contieneA ( Model m ) {
+        for ( int i = 0 ; i < models.size() ; i++ ) {
+            if ( m.getTitle().equals(models.get(i).getTitle()) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Guardamos la información del servidor en el vector productos
     private void setProductInfo( JSONArray info ) {
         try {
@@ -211,8 +222,9 @@ public class PickUpFragment extends Fragment {
                     productos.add(new InformacionProducto(informacion_modelo));
                     String sku = informacion_modelo.getString("sku");
                     String descripcion = informacion_modelo.getString("descripcion");
-                    models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
-                    Toast.makeText(getContext(), "Se añadió: " + informacion_modelo.get("sku"), Toast.LENGTH_LONG ).show();
+                    if ( !contieneA (new Model("SKU: " + sku, "", "")) ) {
+                        models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -237,7 +249,6 @@ public class PickUpFragment extends Fragment {
                     return i;
                 }
             }
-
         }
         return indice_siguiente_a_escanear;
     }
