@@ -142,32 +142,24 @@ public class PickUpFragment extends Fragment {
     }
 
     private void verificarInformacion() {
-        if ( ProductInformationSingleton.getProductInformation() == null ) {
-            // Obtenemos la información del picking desde la base de datos
-            String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad != 0) and (c.asignado = 2) and (ohc.contenedor_id is not null) order by ohc.prioridad;";
+        // Obtenemos la información del picking desde la base de datos
+        String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id, ohc.prioridad from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad != 0) and (c.asignado = 1) and (ohc.contenedor_id is not null) order by ohc.prioridad;";
 
-            Database.query(getContext(), query, new VolleyCallback() {
-                @Override
-                public void onSucces(JSONArray response) {
-                    try {
-                        setProductInfo(response);
-                        // Cargamos los productos a el ViewPager
-                        setViewPagerUp();
-                        // configuramos los botones
-                        configurarBotones();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        Database.query(getContext(), query, new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                try {
+                    Log.i("PickUp", response.toString());
+                    setProductInfo(response);
+                    // Cargamos los productos a el ViewPager
+                    setViewPagerUp();
+                    // configuramos los botones
+                    configurarBotones();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
-        } else { // Si ya está inicializada, obtenemos los productos a escanear
-            productos = ProductInformationSingleton.getProductInformation().getProductos();
-            models = ProductInformationSingleton.getProductInformation().getModels();
-            // Cargamos los productos a el ViewPager
-            setViewPagerUp();
-            // configuramos los botones
-            configurarBotones();
-        }
+            }
+        });
     }
 
     private void pasar_a_siguiente_item() {
@@ -245,11 +237,15 @@ public class PickUpFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
 
-        SeleccionadorPlanograma seleccionador = new SeleccionadorPlanograma();
-        InformacionProducto producto = productos.get(0);
-        txtPasillo.setText("Pasillo: " + producto.getPasillo());
-        txtRack.setText("Rack: " + producto.getRack());
-        planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
+        if (productos.size() > 0){
+            InformacionProducto producto = productos.get(0);
+            txtPasillo.setText("Pasillo: " + producto.getPasillo());
+            txtRack.setText("Rack: " + producto.getRack());
+            planograma.setImageResource(SeleccionadorPlanograma.getDrawable(context, producto.getColumna(), producto.getNivel()));
+        }
+        else {
+            planograma.setImageResource(R.drawable.planograma);
+        }
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
