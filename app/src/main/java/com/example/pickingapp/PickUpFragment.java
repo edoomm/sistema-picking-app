@@ -3,11 +3,10 @@ package com.example.pickingapp;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.app.FragmentTransaction;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.IDNA;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -35,6 +35,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+// Toast.makeText(getContext(), "Toast para debug", Toast.LENGTH_LONG ).show();
 
 public class PickUpFragment extends Fragment {
 
@@ -50,6 +54,18 @@ public class PickUpFragment extends Fragment {
     // Sonidos para el escaneo
     private MediaPlayer successSound;
     private MediaPlayer errorSound;
+
+    private int getIndex ( int indiceActual ) {
+        int index = viewPager.getCurrentItem();
+        // Obtenemos el model elegido en la lista horizontal
+        Model m = models.get(index);
+        // Obtenemos el sku del model
+        int value = obtenerSkuDeString(m.getTitle());
+        index = getSiguienteProductoAEscanear(value);
+        //Toast.makeText(getContext(), "SKU: " + value + " Index: " + index, Toast.LENGTH_LONG ).show();
+        Log.i("M", "SKU: " + value + " Index: " + index + " Size: " + models.size());
+        return index;
+    }
 
     void configurarBotones () {
         // btnLista
@@ -74,7 +90,7 @@ public class PickUpFragment extends Fragment {
                     Intent intent = new Intent(view.getContext(), Escaneo.class);
                     startActivity(intent);
                 } else {
-                    int index = viewPager.getCurrentItem();
+                    int index = getIndex(viewPager.getCurrentItem());
                     InformacionProducto producto = productos.get(index);
                     if ( producto.hasApartado() ) {
                         escanear_codigo(view);
@@ -92,7 +108,7 @@ public class PickUpFragment extends Fragment {
         btnProductoFaltante.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int index = viewPager.getCurrentItem();
+                int index = getIndex(viewPager.getCurrentItem());
                 InformacionProducto producto = productos.get(index);
                 int estado_actual_producto = producto.getEstado();
                 if ( estado_actual_producto == 0 ) {
@@ -164,10 +180,12 @@ public class PickUpFragment extends Fragment {
 
     private void pasar_a_siguiente_item() {
         int index_seleccionado = viewPager.getCurrentItem();
-        Model actual_model = models.get(index_seleccionado);
-        actual_model.setTitle(actual_model.getTitle()+"\n(Ya se ha recolectado)");
-        models.set(index_seleccionado, actual_model);
-        viewPager.setCurrentItem(index_seleccionado + 1);
+        //Model actual_model = models.get(index_seleccionado);
+        //actual_model.setTitle(actual_model.getTitle()+"\n(Ya se ha recolectado)");
+        //models.set(index_seleccionado, actual_model);
+        if ( index_seleccionado + 1 < models.size() ) {
+            viewPager.setCurrentItem(index_seleccionado + 1);
+        }
     }
 
     private void generar_transaccion(InformacionProducto producto) {
@@ -182,14 +200,28 @@ public class PickUpFragment extends Fragment {
             query = "insert into transaccion values (null, \""+numEmpleado+"\", "+contenedor+", "+sku+", "+control_id+", NOW(), \"P\", "+cantidad+");";
         }
         producto.setEstado(1);
-        int index = viewPager.getCurrentItem();
+        int index = getIndex(viewPager.getCurrentItem());
         productos.set(index, producto);
-        Database.query(getContext(), query, new VolleyCallback() {
-            @Override
-            public void onSucces(JSONArray response) {
-                Toast.makeText(getContext(), "Transacción realizada con éxito.", Toast.LENGTH_LONG ).show();
+        Database.insert(getContext(), query);
+        Toast.makeText(getContext(), "Transacción realizada exitosamente.", Toast.LENGTH_LONG ).show();
+    }
+
+    private boolean contieneA ( InformacionProducto p ) {
+        for ( int i = 0 ; i < productos.size() ; i++ ) {
+            if ( p.getControl_id() == productos.get(i).getControl_id() ) {
+                return true;
             }
-        });
+        }
+        return false;
+    }
+
+    private boolean contieneA ( Model m ) {
+        for ( int i = 0 ; i < models.size() ; i++ ) {
+            if ( m.getTitle().equals(models.get(i).getTitle()) ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Guardamos la información del servidor en el vector productos
@@ -197,10 +229,14 @@ public class PickUpFragment extends Fragment {
         try {
             for ( int i = 0 ; i < info.length() ; i++ ) {
                 JSONObject informacion_modelo = info.getJSONObject(i);
-                productos.add(new InformacionProducto(informacion_modelo));
-                String sku = informacion_modelo.getString("sku");
-                String descripcion = informacion_modelo.getString("descripcion");
-                models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                if ( !contieneA(new InformacionProducto(informacion_modelo)) ) {
+                    productos.add(new InformacionProducto(informacion_modelo));
+                    String sku = informacion_modelo.getString("sku");
+                    String descripcion = informacion_modelo.getString("descripcion");
+                    if ( !contieneA (new Model("SKU: " + sku, "", "")) ) {
+                        models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -214,8 +250,29 @@ public class PickUpFragment extends Fragment {
 
     }
 
+    private int obtenerSkuDeString ( String s) {
+        // SKU:_
+        // 01234
+        String value = s.substring(5, s.length());
+        return Integer.parseInt(value);
+    }
+
+    private int getSiguienteProductoAEscanear ( int sku ) {
+        int indice_siguiente_a_escanear = -1;
+        for ( int i = 0 ; i < productos.size() ; i++ ) {
+            InformacionProducto pr = productos.get(i);
+            if ( pr.getSku() == sku ) {
+                indice_siguiente_a_escanear = i;
+                if ( pr.hasApartado() ) {
+                    return i;
+                }
+            }
+        }
+        return indice_siguiente_a_escanear;
+    }
+
     public void escanear_codigo ( View v ) {
-        int index_producto = viewPager.getCurrentItem();
+        int index_producto = getIndex(viewPager.getCurrentItem());
         InformacionProducto producto = productos.get(index_producto);
         if ( producto.hasApartado() ) {
             escanear("Escanee el producto: " + producto.getSku());
@@ -237,7 +294,7 @@ public class PickUpFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setPadding(130, 0, 130, 0);
 
-        if (productos.size() > 0){
+        if (productos.size() > 0) {
             InformacionProducto producto = productos.get(0);
             txtPasillo.setText("Pasillo: " + producto.getPasillo());
             txtRack.setText("Rack: " + producto.getRack());
@@ -254,7 +311,7 @@ public class PickUpFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 SeleccionadorPlanograma seleccionador = new SeleccionadorPlanograma();
-                InformacionProducto producto = productos.get(position);
+                InformacionProducto producto = productos.get(getIndex(position));
                 txtPasillo.setText("Pasillo: " + producto.getPasillo());
                 txtRack.setText("Rack: " + producto.getRack());
                 planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
@@ -269,7 +326,7 @@ public class PickUpFragment extends Fragment {
         //retrieve scan result
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         // Obtenemos el index de la página seleccionada
-        int index = viewPager.getCurrentItem();
+        int index = getIndex(viewPager.getCurrentItem());
         InformacionProducto producto = productos.get(index);
         if ( scanningResult.getContents() != null ) {
             if ( estado == 0 ) { // Aún no se ha escaneado ningún producto
@@ -313,7 +370,7 @@ public class PickUpFragment extends Fragment {
 
 
     private void escanear () {
-        int index = viewPager.getCurrentItem();
+        int index = getIndex(viewPager.getCurrentItem());
         InformacionProducto producto = productos.get(index);
         escanear("Escanee el producto: " + producto.getSku());
     }
@@ -345,12 +402,16 @@ public class PickUpFragment extends Fragment {
         switch(item.getItemId()){
             case R.id.actulizar_control:
                 verificarInformacion();
+                Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container);
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.detach(currentFragment);
+                fragmentTransaction.attach(currentFragment);
+                fragmentTransaction.commit();
                 Toast.makeText(getContext(), "El control está actualizado", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.asignar_contenedores:
                 Toast.makeText(getContext(), "Verificando contenedores...", Toast.LENGTH_SHORT).show();
                 ((PickUp)getActivity()).validarContenedores();
-                Toast.makeText(getContext(), "Los contenedores están asignados", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.ver_contenedores:
                 startActivity(new Intent(getActivity(), Contenedor.class));
