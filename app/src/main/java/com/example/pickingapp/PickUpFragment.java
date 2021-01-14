@@ -1,4 +1,4 @@
-package com.example.pickingapp;
+    package com.example.pickingapp;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -71,13 +71,13 @@ public class PickUpFragment extends Fragment {
         // btnLista
         Button btnLista = view.findViewById(R.id.button_lista);
         btnLista.setOnClickListener( new View.OnClickListener(){
-                                         @Override
-                                         public void onClick(View view) {
-                                             Intent intent = new Intent(view.getContext(), Lista.class);
-                                             ProductInformationSingleton.getProductInformation().setProductos(productos);
-                                             startActivity(intent);
-                                         }
-                                     }
+             @Override
+             public void onClick(View view) {
+                 Intent intent = new Intent(view.getContext(), Lista.class);
+                 ProductInformationSingleton.getProductInformation().setProductos(productos);
+                 startActivity(intent);
+             }
+            }
         );
 
         //btnEscaneo
@@ -206,6 +206,11 @@ public class PickUpFragment extends Fragment {
         Toast.makeText(getContext(), "Transacción realizada exitosamente.", Toast.LENGTH_LONG ).show();
     }
 
+    /**
+     * Método utilizado para verificar si un objeto InformacionProducto esta dentro de la lista productos
+     * @param p Objeto de tipo InformacionProducto
+     * @return bool true: si lo contiene; false: si no
+     */
     private boolean contieneA ( InformacionProducto p ) {
         for ( int i = 0 ; i < productos.size() ; i++ ) {
             if ( p.getControl_id() == productos.get(i).getControl_id() ) {
@@ -215,9 +220,15 @@ public class PickUpFragment extends Fragment {
         return false;
     }
 
+    /**
+     * Método utilizado para verificar si un objeto Model ya está dentro de models, que es lo que va dentro de los CardVIews
+     * @param m Objeto de tipo Model
+     * @return bool true: si lo contiene; false: si no
+     */
     private boolean contieneA ( Model m ) {
         for ( int i = 0 ; i < models.size() ; i++ ) {
-            if ( m.getTitle().equals(models.get(i).getTitle()) ) {
+            // Le agregue después de los &&
+            if ( m.getTitle().equals(models.get(i).getTitle()) && m.getSucursal().equals(models.get(i).getSucursal()) ) {
                 return true;
             }
         }
@@ -233,8 +244,10 @@ public class PickUpFragment extends Fragment {
                     productos.add(new InformacionProducto(informacion_modelo));
                     String sku = informacion_modelo.getString("sku");
                     String descripcion = informacion_modelo.getString("descripcion");
-                    if ( !contieneA (new Model("SKU: " + sku, "", "")) ) {
-                        models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, "A.01.01.02"));
+                    String apartado = informacion_modelo.getString("apartado");
+                    String sucursal = informacion_modelo.getString("id_sucursal");
+                    if ( !contieneA (new Model("SKU: " + sku, "", "", "Sucursal: " + sucursal)) ) {
+                        models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, apartado, "Sucursal: " + sucursal));
                     }
                 }
             }

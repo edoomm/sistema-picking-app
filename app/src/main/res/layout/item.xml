@@ -26,6 +26,17 @@
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:id="@+id/txtCant"
+                android:textColor="#262626"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="16dp"
+                android:text="##"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
                 android:id="@+id/txtDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,6 +48,19 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Descripicion" />
+
+            <TextView
+                android:id="@+id/txtSucursal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtDesc"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginRight="16dp"
+                android:drawablePadding="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Sucursal: #####" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
