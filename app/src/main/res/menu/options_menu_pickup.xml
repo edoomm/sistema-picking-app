@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/actulizar_control"
+        android:title="Actualizar control"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/asignar_contenedores"
+        android:title="Verificar contenedores"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/ver_contenedores"
+        android:title="Ver contenedores"
+        app:showAsAction="never" />
+</menu>
