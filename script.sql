@@ -422,4 +422,6 @@ insert into operador_has_control values
     (33, "111111", NULL, 1),
     (34, "111111", NULL, 1);
 
-UPDATE Control SET asignado = 1;
+UPDATE Control SET asignado = 1; -- Suponiendo que ya estan asignados
+UPDATE Producto SET unidad_medida = 50 WHERE sku = 10053; -- Cambio en UM para un sku
+INSERT INTO Usuario VALUE ('123456', NULL, NULL, 1);
