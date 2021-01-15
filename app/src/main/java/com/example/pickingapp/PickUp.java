@@ -23,6 +23,7 @@ import org.json.JSONArray;
 public class PickUp extends AppCompatActivity {
 
     Context context;
+    AlertDialog dialogContenedores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class PickUp extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        validarContenedores();
+        //validarContenedores();
     }
 
     void validarContenedores(){
@@ -108,21 +109,28 @@ public class PickUp extends AppCompatActivity {
                 @Override
                 public void onSucces(JSONArray response) {
                     if(response != null && response.length() > 0) {
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                        alertDialog.setTitle("Tiene sucursales sin contenedor, por favor, asigne los contenedores");
-                        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                iniciarContenedorActivity();
+                        if(dialogContenedores == null) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Tiene sucursales sin contenedor, por favor, asigne los contenedores");
+                            builder.setPositiveButton("Asignar ahora", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    iniciarContenedorActivity();
+                                }
+                            }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dialogContenedores = builder.create();
+                            dialogContenedores.show();
+                        }
+                        else {
+                            if (!dialogContenedores.isShowing()) {
+                                dialogContenedores.show();
                             }
-                        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                startActivity(new Intent(context, Menu.class));
-                            }
-                        }).setCancelable(false);
-                        AlertDialog dialog = alertDialog.create();
-                        dialog.show();
+                        }
                     }
                 }
             });
@@ -130,7 +138,8 @@ public class PickUp extends AppCompatActivity {
     }
 
     void iniciarContenedorActivity(){
-        startActivity(new Intent(this, Contenedor.class));
+        Intent intent = new Intent(this, Contenedor.class);
+        startActivity(intent);
     }
 
 }

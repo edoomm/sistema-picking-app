@@ -285,8 +285,12 @@ public class AlmacenFragment extends Fragment{
         Database.insert(
                 context,
                 "INSERT INTO `transaccion` (`transaccion_id`, `num_empleado`, `contenedor_id`, `sku`, `control_id`, `hora_realizada`, `tipo_movimiento`, `cantidad`) " +
-                        "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')"
-        );
+                        "VALUES (NULL, '"+noEmpleado+"', NULL, '"+sku+"', NULL, '"+horaYFecha+"', '"+tipoMovimiento+"', '"+cantidad+"')",
+                new VolleyCallback() {
+                    @Override
+                    public void onSucces(JSONArray response) {
+                    }
+                });
         Toast.makeText(context, "Hecho", Toast.LENGTH_SHORT).show();
     }
 

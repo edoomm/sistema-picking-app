@@ -10,6 +10,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+/**
+ * Clase que sirve como adaptadora para mostrar la información que sera desplegada en los CardViews
+ */
+
 public class Adapter extends PagerAdapter {
 
     private List<Model> models;
@@ -37,13 +41,17 @@ public class Adapter extends PagerAdapter {
         layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(R.layout.item, container, false);
 
-        TextView title, desc;
+        TextView title, desc, cant, sucursal;
 
         title = view.findViewById(R.id.txtSku);
         desc = view.findViewById(R.id.txtDesc);
+        cant = view.findViewById(R.id.txtCant);
+        sucursal = view.findViewById(R.id.txtSucursal);
 
         title.setText(models.get(position).getTitle());
         desc.setText(models.get(position).getDesc());
+        cant.setText(models.get(position).getCant());
+        sucursal.setText(models.get(position).getSucursal());
 
         container.addView(view, 0);
         return view;
