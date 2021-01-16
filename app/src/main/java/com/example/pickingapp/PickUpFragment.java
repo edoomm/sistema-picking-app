@@ -159,7 +159,7 @@ public class PickUpFragment extends Fragment {
 
     private void verificarInformacion() {
         // Obtenemos la información del picking desde la base de datos
-        String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id, ohc.prioridad from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad < 0 and tipo_movimiento = 'P') and (c.asignado = 1) and (ohc.contenedor_id is not null) order by ohc.prioridad;";
+        String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id, u.prioridad from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad < 0 and tipo_movimiento = 'P') and (c.estado = 1) and (ohc.contenedor_id is not null) order by u.prioridad;";
 
         Database.query(getContext(), query, new VolleyCallback() {
             @Override
