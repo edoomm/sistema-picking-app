@@ -108,14 +108,14 @@ public class Contenedor extends AppCompatActivity {
 				"LEFT JOIN `operador_has_control` AS ohc ON ohc.control_id = c.control_id " +
 				"WHERE c.id_sucursal = '" + idSucursal + "' " +
 				"AND ohc.contenedor_id = '" + idContenedor + "' " +
-				"AND c.asignado = 1 " +
+				"AND c.estado = 1 " +
 				"AND c.control_id IN (SELECT `control_id` FROM `transaccion` WHERE `tipo_movimiento` = 'P' AND `cantidad` < 0)";
 		String queryUpdate = "UPDATE `operador_has_control` AS ohc " +
 				"INNER JOIN `control` AS c ON ohc.control_id = c.control_id " +
 				"SET ohc.contenedor_id = NULL " +
 				"WHERE ohc.num_empleado = '" + noEmpleado + "' AND c.id_sucursal = '" + idSucursal + "' " +
 				"AND ohc.control_id NOT IN (SELECT `control_id` FROM `transaccion` WHERE `tipo_movimiento` = 'P' AND `cantidad` < 0) " +
-				"AND (c.asignado = 1)";
+				"AND (c.estado = 1)";
 		Database.query(context, query, new VolleyCallback() {
 			@Override
 			public void onSucces(JSONArray response) {
@@ -139,7 +139,7 @@ public class Contenedor extends AppCompatActivity {
 				"INNER JOIN `operador_has_control` AS ohc ON c.control_id = ohc.control_id " +
 				"WHERE ohc.num_empleado = '" + noEmpleado + "' " + /*"' AND ohc.contenedor_id IS NULL  " +*/
 				"AND ohc.control_id NOT IN (SELECT `control_id` FROM `transaccion` WHERE `tipo_movimiento` = 'P' AND `cantidad` < 0) " +
-				"AND (c.asignado = 1) " +
+				"AND (c.estado = 1) " +
 				"GROUP BY c.id_sucursal " +
 				"ORDER BY ohc.contenedor_id DESC";
 		Database.query(this, query, new VolleyCallback() {
@@ -231,7 +231,7 @@ public class Contenedor extends AppCompatActivity {
 				"SET ohc.contenedor_id = '" + idContenedor + "' " +
 				"WHERE ohc.num_empleado = '" + noEmpleado + "' AND c.id_sucursal = '" + idSucursal + "' AND ohc.contenedor_id IS NULL " +
 				"AND ohc.control_id NOT IN (SELECT `control_id` FROM `transaccion` WHERE `tipo_movimiento` = 'P' AND `cantidad` < 0) " +
-				"AND (c.asignado = 1)";
+				"AND (c.estado = 1)";
 		Database.insert(this, query);
 	}
 
@@ -259,7 +259,7 @@ public class Contenedor extends AppCompatActivity {
 				"INNER JOIN `operador_has_control` AS ohc ON c.control_id = ohc.control_id " +
 				"WHERE ohc.num_empleado = '" + noEmpleado + "' AND ohc.contenedor_id = '" + contenedorId + "' " +
 				"AND ohc.control_id NOT IN (SELECT `control_id` FROM `transaccion` WHERE `tipo_movimiento` = 'P' AND `cantidad` < 0) " +
-				"AND (c.asignado = 1) " +
+				"AND (c.estado = 1) " +
 				")";
 		Database.query(this, query, new VolleyCallback() {
 			@Override

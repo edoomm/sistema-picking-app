@@ -212,7 +212,7 @@ public class AlmacenFragment extends Fragment{
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int cantidad = Integer.parseInt(entrada.getText().toString());
-                    enviarTransaccion(skuReabasto, "RA", cantidad);
+                    enviarTransaccion(skuReabasto, "R", cantidad);
                 }
             }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                 @Override
@@ -291,6 +291,17 @@ public class AlmacenFragment extends Fragment{
                     public void onSucces(JSONArray response) {
                     }
                 });
+        Database.query(context, "SELECT `stock` FROM `Producto` WHERE `sku` = '" + sku + "'", new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                try {
+                    JSONObject producto = response.getJSONObject(0);
+                    Database.insert(context, "UPDATE `producto` SET `stock` = " + (producto.getInt("stock") + cantidad) + " WHERE `sku` = '" + sku + "'");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         Toast.makeText(context, "Hecho", Toast.LENGTH_SHORT).show();
     }
 
