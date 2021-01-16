@@ -4,6 +4,10 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+/**
+ * Clase que modela toda la información relevante al producto
+ */
+
 public class InformacionProducto implements Serializable, Comparable {
     private int control_id;
     private int sku;
@@ -18,6 +22,7 @@ public class InformacionProducto implements Serializable, Comparable {
     private int contenedor;
     private int estado; // 0 sin recolectar, 1 : recolectado, 2 : producto faltante
     private int prioridad;
+    private int unidadMedida;
 
 
     public InformacionProducto (JSONObject json_informacion) {
@@ -35,6 +40,7 @@ public class InformacionProducto implements Serializable, Comparable {
             contenedor = json_informacion.getInt("contenedor_id");
             estado = 0;
             prioridad = json_informacion.getInt("prioridad");
+            unidadMedida = json_informacion.getInt("unidad_medida");
         } catch ( Exception e ) {
             e.printStackTrace();
         }
@@ -139,6 +145,8 @@ public class InformacionProducto implements Serializable, Comparable {
     public void setControl_id(int control_id) {
         this.control_id = control_id;
     }
+
+    public int getUnidadMedida() {return  unidadMedida; }
 
     @Override
     public int compareTo(Object o) {

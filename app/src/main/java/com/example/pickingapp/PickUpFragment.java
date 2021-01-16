@@ -3,13 +3,16 @@
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.text.IDNA;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -206,6 +210,24 @@ public class PickUpFragment extends Fragment {
         Toast.makeText(getContext(), "Transacción realizada exitosamente.", Toast.LENGTH_LONG ).show();
     }
 
+    private void generar_transaccion(InformacionProducto producto, int um) {
+        int contenedor = producto.getContenedor();
+        int sku = producto.getSku();
+        int control_id = producto.getControl_id();
+        int cantidad = um * -1;
+        String query;
+        if ( producto.getEstado() == 2 ) {
+            query = "update transaccion set cantidad = "+cantidad+" where control_id = "+control_id+";";
+        } else {
+            query = "insert into transaccion values (null, \""+numEmpleado+"\", "+contenedor+", "+sku+", "+control_id+", NOW(), \"P\", "+cantidad+");";
+        }
+        producto.setEstado(1);
+        int index = getIndex(viewPager.getCurrentItem());
+        productos.set(index, producto);
+        Database.insert(getContext(), query);
+        Toast.makeText(getContext(), "Transacción realizada exitosamente.", Toast.LENGTH_LONG ).show();
+    }
+
     /**
      * Método utilizado para verificar si un objeto InformacionProducto esta dentro de la lista productos
      * @param p Objeto de tipo InformacionProducto
@@ -334,6 +356,12 @@ public class PickUpFragment extends Fragment {
         });
     }
 
+    /**
+     * Sobreescritura de un método que permite realizar el proceso de escaneo
+     * @param requestCode
+     * @param resultCode
+     * @param intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         //retrieve scan result
@@ -357,6 +385,9 @@ public class PickUpFragment extends Fragment {
                     escanear("Escanee el producto: " + producto.getSku());
                 }
             } else if ( estado == 1 ) { // Ya escaneamos un producto, debemos ponerlo en el contenedor
+//                Toast.makeText(getContext(), producto.getUnidadMedida(), Toast.LENGTH_SHORT).show();
+                unidadM = 1; // se predifine este atributo
+
                 String contenedor = String.valueOf(producto.getContenedor());
                 String contenedor_escaneado = scanningResult.getContents();
                 if ( contenedor.equals(contenedor_escaneado) ) { // El contenedor escaneado es el asignado
@@ -369,6 +400,7 @@ public class PickUpFragment extends Fragment {
                     if ( producto.hasApartado() ) {
                         escanear();
                     } else {
+                        obtenerUnidadMedida(producto);
                         generar_transaccion(producto);
                         pasar_a_siguiente_item();
                     }
@@ -381,6 +413,35 @@ public class PickUpFragment extends Fragment {
         }
     }
 
+    /**
+     * Atributo que sirve para obtener la unidad de medida confirmada
+     */
+    private int unidadM;
+    /**
+     * Obtiene y confirma la unidad de medida de un productoq que tenga UM > 1
+     * @param producto
+     */
+    private void obtenerUnidadMedida(InformacionProducto producto) {
+        if (producto.getUnidadMedida() > 1) {
+            // se construye y define el alert
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("Confirme la Unidad de Medida");
+            final EditText txtUm = new EditText(getContext());
+            txtUm.setInputType(InputType.TYPE_CLASS_NUMBER);
+            txtUm.setText(String.valueOf(producto.getUnidadMedida()));
+            alert.setView(txtUm);
+
+            // se obtiene la informacion
+            alert.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int um = Integer.parseInt(txtUm.getText().toString());
+                    unidadM = um;
+                }
+            });
+            alert.show();
+        }
+    }
 
     private void escanear () {
         int index = getIndex(viewPager.getCurrentItem());
