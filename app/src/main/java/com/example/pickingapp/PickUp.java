@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -15,8 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONArray;
 
@@ -65,7 +61,13 @@ public class PickUp extends AppCompatActivity {
                         case R.id.nav_pickup:
                             getIntent().putExtra("firstFragment", "PickUpFragment");
                             getIntent().putExtra("secondFragment", "none");
-                            validarContenedores();
+                            SharedPreferences preferences = getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+                            if(preferences.getBoolean("verificarContenedores", true)){
+                                validarContenedores();
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putBoolean("verificarContenedores", false);
+                                editor.apply();
+                            }
                             selectedFragment = new PickUpFragment();
                             getSupportActionBar().setTitle("Pick Up");
                             break;
