@@ -69,6 +69,11 @@ public class MenuFragment extends Fragment {
         btnPickUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences preferences = getContext().getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("verificarContenedores", true);
+                editor.apply();
+
                 Intent intent = new Intent(getActivity(), PickUp.class);
                 intent.putExtra("firstFragment", "PickUpFragment");
                 intent.putExtra("secondFragment", "none");

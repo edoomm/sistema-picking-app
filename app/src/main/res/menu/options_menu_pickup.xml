@@ -6,10 +6,6 @@
         android:title="Actualizar control"
         app:showAsAction="never" />
     <item
-        android:id="@+id/asignar_contenedores"
-        android:title="Verificar contenedores"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/ver_contenedores"
         android:title="Ver contenedores"
         app:showAsAction="never" />

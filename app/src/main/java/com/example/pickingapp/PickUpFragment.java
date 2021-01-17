@@ -1,46 +1,38 @@
-    package com.example.pickingapp;
+ package com.example.pickingapp;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+ import android.app.AlertDialog;
+ import android.content.Context;
+ import android.content.DialogInterface;
+ import android.content.Intent;
+ import android.content.SharedPreferences;
+ import android.media.MediaPlayer;
+ import android.os.Bundle;
+ import android.text.InputType;
+ import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.Menu;
+ import android.view.MenuInflater;
+ import android.view.MenuItem;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.ImageView;
+ import android.widget.TextView;
+ import android.widget.Toast;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.icu.text.IDNA;
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ import androidx.viewpager.widget.ViewPager;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
+ import com.google.zxing.integration.android.IntentIntegrator;
+ import com.google.zxing.integration.android.IntentResult;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+ import org.json.JSONArray;
+ import org.json.JSONObject;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.TreeSet;
+ import java.util.ArrayList;
 
 // Toast.makeText(getContext(), "Toast para debug", Toast.LENGTH_LONG ).show();
 
@@ -54,6 +46,7 @@ public class PickUpFragment extends Fragment {
     private String numEmpleado;
     private Context context;
     private View view;
+    private int controlesPendientes, contenedoresSinAsignar;
 
     // Sonidos para el escaneo
     private MediaPlayer successSound;
@@ -403,6 +396,11 @@ public class PickUpFragment extends Fragment {
                         obtenerUnidadMedida(producto);
                         generar_transaccion(producto);
                         pasar_a_siguiente_item();
+                        intent = new Intent(getContext(), PickUp.class);
+                        intent.putExtra("firstFragment", "PickUpFragment");
+                        intent.putExtra("secondFragment", "none");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
                 } else {
                     errorSound.start();
@@ -475,21 +473,47 @@ public class PickUpFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
             case R.id.actulizar_control:
-                Toast.makeText(getContext(), "El control está actualizado", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getContext(), PickUp.class);
-                intent.putExtra("firstFragment", "PickUpFragment");
-                intent.putExtra("secondFragment", "none");
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            case R.id.asignar_contenedores:
-                Toast.makeText(getContext(), "Verificando contenedores...", Toast.LENGTH_SHORT).show();
-                ((PickUp)getActivity()).validarContenedores();
+                calcularControlesYContenedoresPendientes();
                 return true;
             case R.id.ver_contenedores:
                 startActivity(new Intent(getActivity(), Contenedor.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void calcularControlesYContenedoresPendientes(){
+        String query = "select count(*) from transaccion as t right join operador_has_control as ohc on t.control_id = ohc.control_id where ohc.num_empleado = \"" + numEmpleado + "\" and transaccion_id is null;";
+        Database.query(getContext(), query, new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                try {
+                    if(response != null) controlesPendientes = response.getJSONObject(0).getInt("count(*)");
+                    else controlesPendientes = 0;
+                    calcularContenedoresSinAsignar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void calcularContenedoresSinAsignar(){
+        String query = "select count(*) from operador_has_control where num_empleado = \"" + numEmpleado + "\" and contenedor_id is null;";
+        Database.query(getContext(), query, new VolleyCallback() {
+            @Override
+            public void onSucces(JSONArray response) {
+                try {
+                    if(response != null) contenedoresSinAsignar = response.getJSONObject(0).getInt("count(*)");
+                    else contenedoresSinAsignar = 0;
+                    Toast.makeText(getContext(),
+                            "Tiene " + controlesPendientes + " apartados pendientes\nY " + contenedoresSinAsignar + " contenedores sin asignar",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
