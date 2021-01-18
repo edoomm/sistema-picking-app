@@ -64,7 +64,7 @@ public class PlaceholderFragment extends Fragment {
 					TextView text = new TextView(getContext());
 					text.setText(item);
 					text.setPadding(10,10,10,10);
-					text.setTextSize(30);
+					text.setTextSize(20);
 					linearLayout.addView(text);
 				}
 			}

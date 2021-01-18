@@ -17,6 +17,7 @@ import java.util.Vector;
 
 public class PageViewModel extends ViewModel {
 
+	private final int numeroCaracteresDescripcion = 20;
 	private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
 
 	private LiveData<List<String>> lista_apartados = Transformations.map(mIndex, new Function<Integer, List<String>>() {
@@ -30,7 +31,14 @@ public class PageViewModel extends ViewModel {
 						InformacionProducto producto = productos.get(i);
 						if ( producto.hasApartado() ) {
 							String cadena = "";
-							cadena = "SKU: " + producto.getSku();
+							String descripcion = producto.getDescripcion();
+							if ( descripcion.length() > numeroCaracteresDescripcion ) {
+								descripcion = descripcion.substring(0, numeroCaracteresDescripcion) + "...";
+							}
+							cadena = descripcion + "\n" +
+									"SKU: " + producto.getSku() + "\n" +
+									"CANTIDAD: " + producto.getApartado() + "\n" +
+									"SUCURSAL: " + producto.getId_sucursal() + "\n";
 							cadenas.add(cadena);
 						}
 					}
@@ -38,19 +46,18 @@ public class PageViewModel extends ViewModel {
 				case 2: // Escaneado
 					for ( int i = 0 ; i < productos.size() ; i++ ) {
 						InformacionProducto producto = productos.get(i);
-						if ( !producto.hasApartado() ) {
+						if ( producto.getEstado() == 2 ) {
 							String cadena = "";
-							cadena = "SKU: " + producto.getSku();
+							String descripcion = producto.getDescripcion();
+							if ( descripcion.length() > numeroCaracteresDescripcion ) {
+								descripcion = descripcion.substring(0, numeroCaracteresDescripcion) + "...";
+							}
+							cadena = descripcion + "\n" +
+									"SKU: " + producto.getSku() + "\n" +
+									"CANTIDAD: " + producto.getApartado() + "\n" +
+									"SUCURSAL: " + producto.getId_sucursal() + "\n";
 							cadenas.add(cadena);
 						}
-					}
-					return cadenas;
-				case 3: // Toda la lista
-					for ( int i = 0 ; i < productos.size() ; i++ ) {
-						InformacionProducto producto = productos.get(i);
-						String cadena = "";
-						cadena = "SKU: " + producto.getSku();
-						cadenas.add(cadena);
 					}
 					return cadenas;
 				default:
