@@ -96,7 +96,7 @@ public class Contenedor extends AppCompatActivity {
 				startPickUp();
 			}
 		});
-		findViewById(R.id.btn_iniciar_picking).setVisibility(View.INVISIBLE);
+		//findViewById(R.id.btn_iniciar_picking).setVisibility(View.INVISIBLE);
 
 		cargarSucursales();
 	}

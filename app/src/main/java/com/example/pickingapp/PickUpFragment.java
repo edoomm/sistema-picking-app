@@ -110,6 +110,7 @@ public class PickUpFragment extends Fragment {
                 int estado_actual_producto = producto.getEstado();
                 if ( estado_actual_producto == 0 ) {
                     producto.setEstado(2);
+                    productos.set(index, producto);
                     int contenedor = producto.getContenedor();
                     int sku = producto.getSku();
                     int control_id = producto.getControl_id();
@@ -124,6 +125,36 @@ public class PickUpFragment extends Fragment {
                 }
             }
         });
+
+        // buttonSiguienteProducto
+        Button btnSiguienteProducto = view.findViewById(R.id.button_siguiente_producto);
+        btnSiguienteProducto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int indice_inicio = viewPager.getCurrentItem();
+                for ( int i = 0 ; i < productos.size() ; i++ ) {
+                    InformacionProducto producto = productos.get(i);
+                    int sku = producto.getSku();
+                    if ( producto.getEstado() == 2 ) {
+                        while ( i < productos.size() && productos.get(i).getSku() == sku ) {
+                            i++;
+                        }
+                        i--;
+                    } else if ( producto.hasApartado() && producto.getEstado() == 0) {
+                        viewPager.setCurrentItem(i);
+                        return;
+                    }
+                }
+                for ( int i = 0 ; i < productos.size() ; i++ ) {
+                    InformacionProducto producto = productos.get(i);
+                    if ( producto.hasApartado() && producto.getEstado() == 2) {
+                        viewPager.setCurrentItem(i);
+                        return;
+                    }
+                }
+            }
+        });
+
     }
 
     @Nullable

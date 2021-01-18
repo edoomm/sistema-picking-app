@@ -12,29 +12,6 @@
 		android:background="#FFFFFF"
 		android:theme="@style/Theme.PickingApp.AppBarOverlay">
 
-		<TextView
-			android:id="@+id/title"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="16dp"
-			android:layout_marginTop="16dp"
-			android:layout_marginRight="16dp"
-			android:text="ID: idApartado"
-			android:textAlignment="textStart"
-			android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-			android:textColor="@color/colorPrimaryDark" />
-
-		<TextView
-			android:id="@+id/textView5"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="16dp"
-			android:layout_marginRight="16dp"
-			android:layout_marginBottom="16dp"
-			android:text="informacionApartado"
-			android:textColor="@color/colorPrimaryDark"
-			android:textSize="18sp" />
-
 		<com.google.android.material.tabs.TabLayout
 			android:id="@+id/tabs"
 			android:layout_width="match_parent"

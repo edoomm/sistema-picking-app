@@ -371,7 +371,7 @@ insert into operador (num_empleado, nombre) values
 insert into ubicacion
     (ubicacion, sku, pasillo, rack, columna, nivel, prioridad)
     values 
-    ("A.01.01.09", 10053, 'A', 1, 1, 9, 1),
+    ("A.01.01.09", 10053, 'A', 1, 1, 3, 1),
     ("A.01.01.02", 10055, 'A', 1, 1, 2, 2),
     ("A.01.01.03", 11522, 'A', 1, 1, 3, 3),
     ("A.01.01.04", 15748, 'A', 1, 1, 4, 4),
