@@ -46,23 +46,22 @@
 
     <ImageView
         android:id="@+id/imgPlanograma"
-        android:src="@drawable/planograma"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/planograma" />
 
     <androidx.viewpager.widget.ViewPager
-        android:foregroundGravity="center"
         android:id="@+id/productsPager"
-        android:layout_marginTop="260dp"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:overScrollMode="never"
+        android:layout_marginTop="300dp"
         android:clipToPadding="false"
-        android:layout_width="match_parent"
-        android:layout_height="120dp">
-    </androidx.viewpager.widget.ViewPager>
+        android:foregroundGravity="center"
+        android:overScrollMode="never"></androidx.viewpager.widget.ViewPager>
 
     <Button
         android:id="@+id/button_lista"
@@ -108,12 +107,27 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="108dp"
         android:layout_marginLeft="-52dp"
-        android:layout_marginTop="559dp"
+        android:layout_marginTop="580dp"
         android:layout_marginEnd="111dp"
         android:layout_weight="1"
         android:text="Siguiente producto por escanear"
         android:textColor="@color/colorPrimary"
         app:backgroundTint="#FFFFFF" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imgPlanograma"
+        android:layout_alignRight="@id/imgPlanograma"
+        android:layout_marginTop="-40dp"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/ubicacion_spinner_pickup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 
 </RelativeLayout>

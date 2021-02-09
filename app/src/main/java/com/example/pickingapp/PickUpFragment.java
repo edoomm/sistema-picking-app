@@ -15,9 +15,12 @@
  import android.view.MenuItem;
  import android.view.View;
  import android.view.ViewGroup;
+ import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
  import android.widget.Button;
  import android.widget.EditText;
  import android.widget.ImageView;
+ import android.widget.Spinner;
  import android.widget.TextView;
  import android.widget.Toast;
 
@@ -30,6 +33,7 @@
  import com.google.zxing.integration.android.IntentResult;
 
  import org.json.JSONArray;
+ import org.json.JSONException;
  import org.json.JSONObject;
 
  import java.util.ArrayList;
@@ -40,6 +44,7 @@ public class PickUpFragment extends Fragment {
 
     private ViewPager viewPager;
     private Adapter adapter;
+    private  ArrayAdapter<String> adapterSeleccionadorUbicacion;
     private ArrayList<Model> models;
     private ArrayList<InformacionProducto> productos;
     private int estado; // 0 : Escanear producto, 1 : Escanear Contenedor asignado, 2 : Asignar contenedor
@@ -181,6 +186,33 @@ public class PickUpFragment extends Fragment {
         // 1: se escaneó un producto y se debe escanear ahora la caja asignada
         // 2: se debe asignar el contenedor
         estado = 0;
+
+        //Seleccionador de distintas ubicaciones
+        Spinner spinner = view.findViewById(R.id.ubicacion_spinner_pickup);
+        adapterSeleccionadorUbicacion = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item);
+        adapterSeleccionadorUbicacion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapterSeleccionadorUbicacion);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View _view, int position, long id) {
+                ImageView planograma = view.findViewById(R.id.imgPlanograma);
+                TextView txtPasillo = view.findViewById(R.id.textPasillo);
+                TextView txtRack = view.findViewById(R.id.textRack);
+                String ubicacion = (String) parent.getItemAtPosition(position);
+                String _pasillo = ubicacion.substring(0, 1);
+                String _rack = ubicacion.substring(2, 4);
+                String columna = ubicacion.substring(5, 7);
+                String nivel = ubicacion.substring(8, 10);
+                Log.i("Almacen", "Item: " + ubicacion + " pasillo: " + _pasillo + " rack: " + _rack + " columna: " + columna + " nivel: " + nivel);
+                planograma.setImageResource(SeleccionadorPlanograma.getDrawable(context, Integer.parseInt(columna), Integer.parseInt(nivel)));
+                txtPasillo.setText("Pasillo: " + _pasillo);
+                txtRack.setText("Rack: " + _rack);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         return view;
     }
@@ -373,6 +405,20 @@ public class PickUpFragment extends Fragment {
             public void onPageSelected(int position) {
                 SeleccionadorPlanograma seleccionador = new SeleccionadorPlanograma();
                 InformacionProducto producto = productos.get(getIndex(position));
+                Database.query(context, "SELECT `ubicacion` FROM `ubicacion` WHERE `sku` = '" + producto.getSku() + "'", new VolleyCallback() {
+                    @Override
+                    public void onSucces(JSONArray response) {
+                        try {
+                            adapterSeleccionadorUbicacion.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                adapterSeleccionadorUbicacion.add(response.getJSONObject(i).getString("ubicacion"));
+                            }
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 txtPasillo.setText("Pasillo: " + producto.getPasillo());
                 txtRack.setText("Rack: " + producto.getRack());
                 planograma.setImageResource(seleccionador.getDrawable(context, producto.getColumna(), producto.getNivel()));
