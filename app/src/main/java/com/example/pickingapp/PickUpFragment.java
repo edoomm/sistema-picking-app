@@ -187,15 +187,16 @@ public class PickUpFragment extends Fragment {
 
     private void verificarInformacion() {
         // Obtenemos la información del picking desde la base de datos
-        String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id, u.prioridad from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad < 0 and tipo_movimiento = 'P') and (c.estado = 1) and (ohc.contenedor_id is not null) order by u.prioridad;";
+        String query = "select c.control_id, c.sku, c.apartado, c.id_sucursal, p.descripcion, u.pasillo, u.rack, u.columna, u.nivel, ohc.contenedor_id, u.prioridad, p.unidad_medida from control as c inner join operador_has_control as ohc on c.control_id = ohc.control_id inner join producto as p on p.sku = c.sku inner join ubicacion as u on u.sku = p.sku where ohc.num_empleado = \""+numEmpleado+"\" and ohc.control_id not in (select control_id from transaccion where cantidad < 0 and tipo_movimiento = 'P') and (c.estado = 1) and (ohc.contenedor_id is not null) order by u.prioridad;";
 
         Database.query(getContext(), query, new VolleyCallback() {
             @Override
             public void onSucces(JSONArray response) {
                 try {
                     Log.i("PickUp", response.toString());
+                    // Guardamos la información en el arreglo (InformacionProducto)productos
                     setProductInfo(response);
-                    // Cargamos los productos a el ViewPager
+                    // Cargamos los productos al ViewPager
                     setViewPagerUp();
                     // configuramos los botones
                     configurarBotones();
@@ -292,6 +293,7 @@ public class PickUpFragment extends Fragment {
                     String descripcion = informacion_modelo.getString("descripcion");
                     String apartado = informacion_modelo.getString("apartado");
                     String sucursal = informacion_modelo.getString("id_sucursal");
+
                     if ( !contieneA (new Model("SKU: " + sku, "", "", "Sucursal: " + sucursal)) ) {
                         models.add(new Model("SKU: " + sku, "Descripción: " + descripcion, apartado, "Sucursal: " + sucursal));
                     }
@@ -387,7 +389,7 @@ public class PickUpFragment extends Fragment {
      * @param intent
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    synchronized public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         //retrieve scan result
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         // Obtenemos el index de la página seleccionada
@@ -401,27 +403,24 @@ public class PickUpFragment extends Fragment {
                     successSound.start();
                     // indicamos que hay un producto escaneado
                     estado = 1;
-                    Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
-                    escanear("Escanee el contenedor " + producto.getContenedor());
+                    escanear();
+                    //Toast.makeText(getContext(), "Unidad de medida: " + producto.getUnidadMedida(), Toast.LENGTH_SHORT).show();
                 } else {
                     errorSound.start();
                     Toast.makeText(getContext(), "Por favor, escanea el producto: " + producto.getDescripcion(), Toast.LENGTH_SHORT).show();
                     escanear("Escanee el producto: " + producto.getSku());
                 }
             } else if ( estado == 1 ) { // Ya escaneamos un producto, debemos ponerlo en el contenedor
-//                Toast.makeText(getContext(), producto.getUnidadMedida(), Toast.LENGTH_SHORT).show();
-                unidadM = 1; // se predifine este atributo
-
                 String contenedor = String.valueOf(producto.getContenedor());
                 String contenedor_escaneado = scanningResult.getContents();
                 if ( contenedor.equals(contenedor_escaneado) ) { // El contenedor escaneado es el asignado
                     // Volvemos al estado inicial
                     estado = 0;
-                    producto.decrementarApartado();
+                    producto.decrementarApartado(unidadM);
                     productos.set(index, producto);
                     Toast.makeText(getContext(),"Restantes: " + producto.getApartado(), Toast.LENGTH_SHORT).show();
                     successSound.start();
-                    if ( producto.hasApartado() ) {
+                    if ( producto.hasApartado() ) { // Aún hay que escanear más sku
                         escanear();
                     } else {
                         obtenerUnidadMedida(producto);
@@ -450,11 +449,11 @@ public class PickUpFragment extends Fragment {
      * Obtiene y confirma la unidad de medida de un productoq que tenga UM > 1
      * @param producto
      */
-    private void obtenerUnidadMedida(InformacionProducto producto) {
+    synchronized private void obtenerUnidadMedida(final InformacionProducto producto) {
         if (producto.getUnidadMedida() > 1) {
             // se construye y define el alert
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            alert.setTitle("Confirme la Unidad de Medida");
+            alert.setTitle("Confirme la cantidad de productos en el paquete");
             final EditText txtUm = new EditText(getContext());
             txtUm.setInputType(InputType.TYPE_CLASS_NUMBER);
             txtUm.setText(String.valueOf(producto.getUnidadMedida()));
@@ -464,18 +463,46 @@ public class PickUpFragment extends Fragment {
             alert.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    int um = Integer.parseInt(txtUm.getText().toString());
-                    unidadM = um;
+                    // Verificamos que se haya ingresado un valor
+                    if ( txtUm.getText().toString().length() == 0 || Integer.parseInt(txtUm.getText().toString()) == 0 ) {
+                        Toast.makeText(getContext(),"Ingrese una cantidad válida.", Toast.LENGTH_SHORT).show();
+                        obtenerUnidadMedida(producto);
+                        return;
+                    }
+                    unidadM = Integer.parseInt(txtUm.getText().toString());
+                    if ( unidadM > producto.getUnidadMedida() ) {
+                        Toast.makeText(getContext(),"La cantidad máxima del paquete es " + producto.getUnidadMedida(), Toast.LENGTH_SHORT).show();
+                        obtenerUnidadMedida(producto);
+                        return;
+                    }
+                    if ( unidadM > producto.getApartado() ) {
+                        Toast.makeText(getContext(),"Solo se necesitan " + producto.getApartado() + " productos más, tomelos del paquete e ingrese la cantidad adecuada.", Toast.LENGTH_SHORT).show();
+                        obtenerUnidadMedida(producto);
+                        return;
+                    }
+
+                    Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
+                    escanear("Escanee el contenedor " + producto.getContenedor());
                 }
             });
             alert.show();
+        } else {
+            unidadM = 1;
+            Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
+            escanear("Escanee el contenedor " + producto.getContenedor());
         }
+
+
     }
 
     private void escanear () {
         int index = getIndex(viewPager.getCurrentItem());
         InformacionProducto producto = productos.get(index);
-        escanear("Escanee el producto: " + producto.getSku());
+        if ( estado == 0 ) {
+            escanear("Escanee el producto: " + producto.getSku());
+        } else if ( estado == 1 ) {
+            obtenerUnidadMedida(producto);
+        }
     }
 
     private void escanear (String mensaje) {
