@@ -463,9 +463,26 @@ public class PickUpFragment extends Fragment {
             alert.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    // Verificamos que se haya ingresado un valor
+                    if ( txtUm.getText().toString().length() == 0 || Integer.parseInt(txtUm.getText().toString()) == 0 ) {
+                        Toast.makeText(getContext(),"Ingrese una cantidad válida.", Toast.LENGTH_SHORT).show();
+                        obtenerUnidadMedida(producto);
+                        return;
+                    }
                     unidadM = Integer.parseInt(txtUm.getText().toString());
+                    if ( unidadM > producto.getUnidadMedida() ) {
+                        Toast.makeText(getContext(),"La cantidad máxima del paquete es " + producto.getUnidadMedida(), Toast.LENGTH_SHORT).show();
+                        obtenerUnidadMedida(producto);
+                        return;
+                    }
+                    if ( unidadM > producto.getApartado() ) {
+                        Toast.makeText(getContext(),"Solo se necesitan " + producto.getApartado() + " productos más, tomelos del paquete e ingrese la cantidad adecuada.", Toast.LENGTH_SHORT).show();
+                        obtenerUnidadMedida(producto);
+                        return;
+                    }
+
                     Toast.makeText(getContext(),"Escanee el contenedor " + producto.getContenedor(), Toast.LENGTH_SHORT).show();
-                    escanear("Escanee el contenedor " + producto.getContenedor());  
+                    escanear("Escanee el contenedor " + producto.getContenedor());
                 }
             });
             alert.show();
