@@ -102,6 +102,10 @@ public class InformacionProducto implements Serializable, Comparable {
         apartado--;
     }
 
+    public void decrementarApartado (int cantidad) {
+        apartado -= cantidad;
+    }
+
     public int getId_sucursal() {
         return id_sucursal;
     }
@@ -146,7 +150,7 @@ public class InformacionProducto implements Serializable, Comparable {
         this.control_id = control_id;
     }
 
-    public int getUnidadMedida() {return  unidadMedida; }
+    public int getUnidadMedida() { return  unidadMedida; }
 
     @Override
     public int compareTo(Object o) {
