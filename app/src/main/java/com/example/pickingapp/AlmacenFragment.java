@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class AlmacenFragment extends Fragment{
 
     private ListView search;
     private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> adapterSeleccionadorUbicacion;
     private ImageView planograma;
     private TextView pasillo;
     private TextView rack;
@@ -77,6 +79,28 @@ public class AlmacenFragment extends Fragment{
         planograma = (ImageView) view.findViewById(R.id.planograma_almacen);
         pasillo = (TextView) view.findViewById(R.id.pasillo_almacen);
         rack = (TextView) view.findViewById(R.id.rack_almacen);
+        Spinner spinner = view.findViewById(R.id.ubicacion_spinner);
+        adapterSeleccionadorUbicacion = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item);
+        adapterSeleccionadorUbicacion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapterSeleccionadorUbicacion);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String ubicacion = (String) parent.getItemAtPosition(position);
+                String _pasillo = ubicacion.substring(0, 1);
+                String _rack = ubicacion.substring(2, 4);
+                String columna = ubicacion.substring(5, 7);
+                String nivel = ubicacion.substring(8, 10);
+                Log.i("Almacen", "Item: " + ubicacion + " pasillo: " + _pasillo + " rack: " + _rack + " columna: " + columna + " nivel: " + nivel);
+                planograma.setImageResource(SeleccionadorPlanograma.getDrawable(context, Integer.parseInt(columna), Integer.parseInt(nivel)));
+                pasillo.setText("Pasillo: " + _pasillo);
+                rack.setText("Rack: " + _rack);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //Search bar functionality
         search = view.findViewById(R.id.SKU_list_view);
@@ -89,7 +113,7 @@ public class AlmacenFragment extends Fragment{
                 Database.query(context, "SELECT * FROM `ubicacion` WHERE `sku`=" + sku, new VolleyCallback() {
                     @Override
                     public void onSucces(JSONArray response) {
-                        cambiarUbicaion(response);
+                        cambiarUbicaion(response, 0);
                     }
                 });
             }
@@ -102,7 +126,7 @@ public class AlmacenFragment extends Fragment{
                 Database.query(context, "SELECT * FROM `ubicacion` WHERE `sku`=" + query, new VolleyCallback() {
                     @Override
                     public void onSucces(JSONArray response) {
-                        cambiarUbicaion(response);
+                        cambiarUbicaion(response, 0);
                     }
                 });
                 return false;
@@ -318,16 +342,23 @@ public class AlmacenFragment extends Fragment{
         }
     }
 
-    void cambiarUbicaion(JSONArray response){
+    void cambiarUbicaion(JSONArray response, int index){
         Log.i("Connection", response.toString());
         try {
-            JSONObject ubicacion = response.getJSONObject(0);
+            adapterSeleccionadorUbicacion.clear();
+            for (int i = 0; i < response.length(); i++){
+                adapterSeleccionadorUbicacion.add(response.getJSONObject(i).getString("ubicacion"));
+            }
+            JSONObject ubicacion = response.getJSONObject(index);
             planograma.setImageResource(SeleccionadorPlanograma.getDrawable(context, ubicacion.getInt("columna"), ubicacion.getInt("nivel")));
             pasillo.setText("Pasillo: " + ubicacion.getString("pasillo"));
             rack.setText("Rack: " + ubicacion.getString("rack"));
             skuSeleccionado.setText("Sku seleccionado: "+ubicacion.getString("sku"));
         } catch (JSONException e) {
             Toast.makeText(context, "No se encontró la ubicación", Toast.LENGTH_LONG).show();
+            planograma.setImageResource(R.drawable.planograma);
+            pasillo.setText("Pasillo:");
+            rack.setText("Rack:");
             e.printStackTrace();
         }
     }
