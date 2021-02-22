@@ -26,4 +26,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_consulta_preguntas">ScrollingActivity</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Tutorial Strings -->
+
 </resources>
