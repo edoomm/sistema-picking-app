@@ -1,88 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/almacen_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PickUp">
+    android:layout_height="match_parent" >
 
-    <ListView
-        android:id="@+id/SKU_list_view"
-        android:layout_width="376dp"
-        android:layout_height="184dp"
-        android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SKU_searchView"
-        app:layout_constraintVertical_bias="0.0">
-
-    </ListView>
-
-    <TextView
-        android:id="@+id/textView9"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Buscar Producto"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.022" />
+        android:layout_alignTop="@id/planograma_almacen"
+        android:layout_alignRight="@id/planograma_almacen"
+        android:layout_marginTop="-40sp"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/ubicacion_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/planograma_almacen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pasillo_almacen"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45sp"
+        app:srcCompat="@drawable/planograma" />
 
     <TextView
         android:id="@+id/pasillo_almacen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/sku_seleccionado"
+        android:layout_marginLeft="20sp"
+        android:layout_marginTop="5sp"
         android:text="Pasillo:"
         android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.177" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/rack_almacen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/sku_seleccionado"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5sp"
+        android:layout_marginRight="20sp"
         android:text="Rack:"
         android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.898"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.177" />
+        android:textSize="24sp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="395dp"
-        android:layout_height="59dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"/>
+    <TextView
+        android:id="@+id/sku_seleccionado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10sp"
+        android:text="Sku seleccionado:"
+        android:textSize="18sp" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="339dp"
-        android:layout_height="68dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SKU_list_view"
-        app:layout_constraintVertical_bias="0.0">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/SKU_list_view"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5sp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_reabastecer"
@@ -100,56 +88,32 @@
 
     </LinearLayout>
 
+    <ListView
+        android:id="@+id/SKU_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_below="@id/SKU_searchView"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
+        android:padding="20dp">
+
+    </ListView>
+
     <SearchView
         android:id="@+id/SKU_searchView"
-        android:layout_width="325dp"
-        android:layout_height="47dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/planograma_almacen"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/planograma" />
+        android:layout_below="@id/textView2"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp" />
 
     <TextView
-        android:id="@+id/sku_seleccionado"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sku seleccionado:"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/pasillo_almacen"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+        android:layout_marginLeft="20sp"
+        android:layout_marginTop="5sp"
+        android:text="Buscar Producto"
+        android:textSize="18sp" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rack_almacen"
-        app:layout_constraintVertical_bias="0.07999998">
-
-        <Spinner
-            android:id="@+id/ubicacion_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
