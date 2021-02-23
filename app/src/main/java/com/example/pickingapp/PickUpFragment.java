@@ -171,7 +171,7 @@ public class PickUpFragment extends Fragment {
         SharedPreferences preferences = view.getContext().getSharedPreferences("app_preferences", Context.MODE_PRIVATE);
         numEmpleado = preferences.getString("num_empleado", "");
 
-        // Inicializamos atributos peligrosos
+        // Inicializamos atributos
         productos = new ArrayList<>();
         models = new ArrayList<>();
 
@@ -179,6 +179,7 @@ public class PickUpFragment extends Fragment {
         successSound = MediaPlayer.create(getContext(), R.raw.success);
         errorSound = MediaPlayer.create(getContext(), R.raw.error);
 
+        // Se recolecta la información del servidor
         verificarInformacion();
 
         // Estado de recolección
@@ -255,16 +256,20 @@ public class PickUpFragment extends Fragment {
         int control_id = producto.getControl_id();
         int cantidad = producto.getApartadoGlobal() * -1;
         String query;
+        // Si el producto está marcado como faltante, solo actualizamos la tabla
         if ( producto.getEstado() == 2 ) {
             query = "update transaccion set cantidad = "+cantidad+" where control_id = "+control_id+";";
         } else {
+            // Registramos la transaccion, ya sea completa o por producto faltante
             query = "insert into transaccion values (null, \""+numEmpleado+"\", "+contenedor+", "+sku+", "+control_id+", NOW(), \"P\", "+cantidad+");";
         }
-        producto.setEstado(1);
+        // Query de actualización
+        String queryTablaControl = "update control set estado = 2 where control_id = " + control_id + ";";
         int index = getIndex(viewPager.getCurrentItem());
         productos.set(index, producto);
         Database.insert(getContext(), query);
-        Toast.makeText(getContext(), "Transacción realizada exitosamente.", Toast.LENGTH_LONG ).show();
+        Database.insert(getContext(), queryTablaControl);
+        Toast.makeText(getContext(), "Transacción realizada.", Toast.LENGTH_SHORT ).show();
     }
 
     private void generar_transaccion(InformacionProducto producto, int um) {

@@ -1,158 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TutorialFragment">
 
-    <TextView
-        android:id="@+id/textView17"
-        android:layout_width="88dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="36dp"
-        android:text="Tutorial"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ScrollView
-        android:layout_width="317dp"
-        android:layout_height="634dp"
-        android:layout_marginBottom="30dp"
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.589"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17"
-        app:layout_constraintVertical_bias="0.159">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <LinearLayout
-            android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="750dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="Cambiar configuración de escaneo por defecto"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/textView21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1.- Presiona el botón configuración del menú principal."
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView22"
+            <ExpandableListView
+                android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="2.- Seleccione el método de escaneo deseado: cámara/escaner."
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView23"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text='3.- Presione el botón "Sincronización de escaner" y listo.'
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/tutorial_config_gif"
-                android:layout_width="189dp"
-                android:layout_height="290dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:src="@drawable/tutorial_configuracion" />
-
-            <TextView
-                android:id="@+id/textView18"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="Proceso de Pickeo"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/textView24"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text='1.- Presiona el botón "Pick Up" del menu principal.'
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView25"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text='2.- Se moestrará la pantalla "PickUp" donde se mostrará un mapa con la ruta que debes seguir para la recolección de los productos.'
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView26"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="3.- Dirijase a la primera ubicación que indica el mapa."
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView28"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text='4.- Una vez en la ubicación, presione el botón "Escanear".'
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView29"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="5.- Dependiendo del tipo de escaneo se mostrará una pantalla de espera para el escaneo con pistola, o se visualizará una pantalla con la camará para realizar el escaneo con la cámara. Escanee el código de barras del producto."
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView30"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="6.- Escanee el código de barras de la caja donde se pondrá el producto. Si escanea la caja erronea, se arrojará un mensaje, por lo que debe escanear la caja correspondiente a dicho pedido."
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView31"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="7.- Realice los pasos 5 y 6 hasta que termine de escanear todos los productos."
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView27"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:layout_height="730dp" />
 
         </LinearLayout>
+
+
     </ScrollView>
 
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
