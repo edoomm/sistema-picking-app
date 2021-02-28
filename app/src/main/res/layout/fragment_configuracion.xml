@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,25 +10,23 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cambiar Método de Escaneo"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        android:layout_centerHorizontal="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.072" />
+        android:text="Cambiar Método de Escaneo"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="24sp" />
 
     <RadioGroup
         android:id="@+id/pref_escaner"
         android:layout_width="297dp"
         android:layout_height="98dp"
+        android:layout_centerHorizontal="true"
         app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="150dp"
         app:layout_constraintTop_toBottomOf="@+id/textView6">
+
 
         <RadioButton
             android:id="@+id/escaner"
@@ -54,6 +51,8 @@
         android:id="@+id/button2"
         android:layout_width="281dp"
         android:layout_height="75dp"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="false"
         android:text="Sincronización de escáner"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,4 +60,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6"
         app:layout_constraintVertical_bias="0.36" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

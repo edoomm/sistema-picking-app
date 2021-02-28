@@ -3,12 +3,14 @@ package com.example.pickingapp;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -52,8 +54,8 @@ public class AyudaFragment extends Fragment{
     }
 
     public void consultaFaq(View view){
-        ConstraintLayout constraintLayout = (ConstraintLayout) view.findViewById(R.id.ayuda);
-        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.ayuda);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
 
@@ -75,11 +77,17 @@ public class AyudaFragment extends Fragment{
 
                         textViewsPreguntas[i].setLayoutParams(params);
                         textViewsPreguntas[i].setTextSize(24);
+                        textViewsPreguntas[i].setTextColor(Color.BLUE);
                         textViewsRespuestas[i].setLayoutParams(params);
+                        if (i!=0){
+
+                        }else {
+
+                        }
 
 
-                        //constraintLayout.addView(textViewsPreguntas[i]);
-                        //constraintLayout.addView(textViewsRespuestas[i]);
+                        relativeLayout.addView(textViewsPreguntas[i]);
+                        relativeLayout.addView(textViewsRespuestas[i]);
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
