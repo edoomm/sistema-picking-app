@@ -4,7 +4,86 @@
     android:id="@+id/ayuda"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tituloAyuda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Preguntas Frecuentes"
+        android:textColor="@color/colorPrimary"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/pregunta1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/tituloAyuda"
+        android:text="No hay suficiente producto en el almacén"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/respuesta1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:text='En caso de que no exista suficiente producto en el almacén durante un pickeo, presiona el botón "Producto Faltante" en la pantalla de "Pickup" y el problema se reportará al líder del almacén.'
+        android:textColor="@color/black"
+        android:layout_below="@+id/pregunta1"/>
+
+    <TextView
+        android:id="@+id/pregunta2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/respuesta1"
+        android:text="No hay suficiente producto en el almacén"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/respuesta2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/pregunta2"
+        android:text='En caso de que no exista suficiente producto en el almacén durante un pickeo, presiona el botón "Producto Faltante" en la pantalla de "Pickup" y el problema se reportará al líder del almacén.'
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:id="@+id/pregunta3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/respuesta2"
+        android:text="No hay suficiente producto en el almacén"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/respuesta3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/pregunta3"
+        android:text='En caso de que no exista suficiente producto en el almacén durante un pickeo, presiona el botón "Producto Faltante" en la pantalla de "Pickup" y el problema se reportará al líder del almacén.'
+        android:textColor="@color/black"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/my_fab1"

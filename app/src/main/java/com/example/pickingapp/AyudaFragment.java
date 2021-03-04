@@ -49,7 +49,7 @@ public class AyudaFragment extends Fragment{
             }
         });
 
-        //consultaFaq(view);
+        consultaFaq(view);
         return view;
     }
 
@@ -62,13 +62,36 @@ public class AyudaFragment extends Fragment{
         Database.query(getContext(), "Select * from Faq", new VolleyCallback() {
             @Override
             public void onSucces(JSONArray response) {
-                JSONObject respuesta;
+                JSONObject respuesta1,respuesta2,respuesta3;
                 TextView[] textViewsPreguntas = new  TextView[response.length()];
                 TextView[] textViewsRespuestas = new TextView[response.length()];
                 try {
-                    for (int i=0; i<response.length();i++){
-                        respuesta=response.getJSONObject(i);
+                    respuesta1=response.getJSONObject(0);
+                    respuesta2=response.getJSONObject(1);
+                    respuesta3=response.getJSONObject(2);
+                    TextView p1,p2,p3,r1,r2,r3;
+                    p1 = (TextView) relativeLayout.findViewById(R.id.pregunta1);
+                    p2 = (TextView) relativeLayout.findViewById(R.id.pregunta2);
+                    p3 = (TextView) relativeLayout.findViewById(R.id.pregunta3);
 
+                    r1 = (TextView) relativeLayout.findViewById(R.id.respuesta1);
+                    r2 = (TextView) relativeLayout.findViewById(R.id.respuesta2);
+                    r3 = (TextView) relativeLayout.findViewById(R.id.respuesta3);
+
+
+                    p1.setText(respuesta1.getString("pregunta"));
+                    r1.setText(respuesta1.getString("respuesta"));
+
+                    p2.setText(respuesta2.getString("pregunta"));
+                    r2.setText(respuesta2.getString("respuesta"));
+
+                    p3.setText(respuesta3.getString("pregunta"));
+                    r3.setText(respuesta3.getString("respuesta"));
+
+                    //código para inserción dinámica de preguntas
+
+                    /*for (int i=0; i<3;i++){
+                        respuesta=response.getJSONObject(i);
                         textViewsPreguntas[i] = new TextView(getContext());
                         textViewsRespuestas[i] = new TextView(getContext());
 
@@ -79,16 +102,10 @@ public class AyudaFragment extends Fragment{
                         textViewsPreguntas[i].setTextSize(24);
                         textViewsPreguntas[i].setTextColor(Color.BLUE);
                         textViewsRespuestas[i].setLayoutParams(params);
-                        if (i!=0){
-
-                        }else {
-
-                        }
-
 
                         relativeLayout.addView(textViewsPreguntas[i]);
                         relativeLayout.addView(textViewsRespuestas[i]);
-                    }
+                    }*/
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
