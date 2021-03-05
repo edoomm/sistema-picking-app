@@ -11,7 +11,7 @@
         android:id="@+id/tituloAyuda"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="10sp"
         android:text="Preguntas Frecuentes"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp"
@@ -22,8 +22,8 @@
         android:id="@+id/pregunta1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30sp"
+        android:layout_marginLeft="20sp"
         android:layout_below="@+id/tituloAyuda"
         android:text="No hay suficiente producto en el almacén"
         android:textColor="@color/colorPrimary"
@@ -34,8 +34,8 @@
         android:id="@+id/respuesta1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="20sp"
         android:text='En caso de que no exista suficiente producto en el almacén durante un pickeo, presiona el botón "Producto Faltante" en la pantalla de "Pickup" y el problema se reportará al líder del almacén.'
         android:textColor="@color/black"
         android:layout_below="@+id/pregunta1"/>
@@ -44,8 +44,8 @@
         android:id="@+id/pregunta2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30sp"
+        android:layout_marginLeft="20sp"
         android:layout_below="@+id/respuesta1"
         android:text="No hay suficiente producto en el almacén"
         android:textColor="@color/colorPrimary"
@@ -56,8 +56,8 @@
         android:id="@+id/respuesta2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="20sp"
         android:layout_below="@+id/pregunta2"
         android:text='En caso de que no exista suficiente producto en el almacén durante un pickeo, presiona el botón "Producto Faltante" en la pantalla de "Pickup" y el problema se reportará al líder del almacén.'
         android:textColor="@color/black"
@@ -66,8 +66,8 @@
         android:id="@+id/pregunta3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30sp"
+        android:layout_marginLeft="20sp"
         android:layout_below="@+id/respuesta2"
         android:text="No hay suficiente producto en el almacén"
         android:textColor="@color/colorPrimary"
@@ -78,31 +78,40 @@
         android:id="@+id/respuesta3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="20sp"
         android:layout_below="@+id/pregunta3"
         android:text='En caso de que no exista suficiente producto en el almacén durante un pickeo, presiona el botón "Producto Faltante" en la pantalla de "Pickup" y el problema se reportará al líder del almacén.'
-        android:textColor="@color/black"
-        />
+        android:textColor="@color/black" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/my_fab1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="500dp"
-        android:layout_marginRight="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/my_fab"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/my_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/my_fab1"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:src="@android:drawable/ic_dialog_info"
-        app:layout_constraintVertical_bias="1.0" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/my_fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_dialog_email" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/my_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/my_fab1"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="92dp"
+            android:layout_marginRight="10dp"
+            android:src="@android:drawable/ic_dialog_info"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
