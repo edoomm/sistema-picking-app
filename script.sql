@@ -107,6 +107,27 @@ CREATE TABLE `Transaccion` (
     FOREIGN KEY (`control_id`) REFERENCES `Control` (`control_id`)
 );
 
+--Script tabla para preguntas frecuentes
+
+DROP TABLE IF EXISTS `faq`;
+CREATE TABLE IF NOT EXISTS `faq` (
+  `faq_id` int NOT NULL AUTO_INCREMENT,
+  `pregunta` text NOT NULL,
+  `respuesta` text NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`faq_id`)
+);
+
+--
+-- Volcado de datos para la tabla `faq`
+--
+
+INSERT INTO `faq` (`faq_id`, `pregunta`, `respuesta`) VALUES
+(1, 'Test de pregunta frecuente 1', 'Test de respuesta 1'),
+(2, 'Test de pregunta frecuente 2', 'Test de respuesta 2'),
+(3, 'Test de pregunta frecuente 3', 'Test de respuesta 3');
+
+
 insert into producto (sku, id_linea, generico, unidad_medida, descripcion, stock) values
     (508748 , "AJG" , "E", 1, "TRENZADO AMARILLO", 1),
     (508749 , "AJG" , "E", 1, "TRENZADO ROSA", 1),

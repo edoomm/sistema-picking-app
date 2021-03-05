@@ -19,7 +19,7 @@ public class ConfigFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_config, container, false);
+        View view = inflater.inflate(R.layout.fragment_configuracion, container, false);
 
         RadioGroup radioGroup =(RadioGroup) view.findViewById(R.id.pref_escaner);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
